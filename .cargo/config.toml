@@ -1,0 +1,5 @@
+[build]
+
+# Pi 2/3/4
+[target.armv7-unknown-linux-gnueabihf]
+linker = "arm-none-linux-gnueabihf-gcc"
