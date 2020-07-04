@@ -18,13 +18,19 @@ jobs:
           default: true
           override: true
           target: armv7-unknown-linux-gnueabihf
-      - name: Build
-        run: cargo build --release --target armv7-unknown-linux-gnueabihf
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/armv7-unknown-linux-gnueabihf/release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download GNU toolchain
+        run: wget -q https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-linux-gnueabihf.tar.xz?revision=9f9d8e2a-dc64-481a-bcc3-1a5016bcacbf&la=en&hash=E2FCA633905FA9A7FFA500D711B86B35158395F7
+#       - name: Unzip GNU toolchain
+#         run: 
+#       - name: Add GNU toolchain binaries to path
+#         run: echo '
+#       - name: Build
+#         run: cargo build --release --target armv7-unknown-linux-gnueabihf
+#       - name: Release
+#         uses: softprops/action-gh-release@v1
+#         if: startsWith(github.ref, 'refs/tags/')
+#         with:
+#           files: |
+#             target/armv7-unknown-linux-gnueabihf/release
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
