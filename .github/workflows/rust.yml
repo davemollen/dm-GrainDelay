@@ -19,11 +19,11 @@ jobs:
           override: true
           target: armv7-unknown-linux-gnueabihf
       - name: Download GNU toolchain
-        run: wget https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-linux-gnueabihf.tar.xz?revision=9f9d8e2a-dc64-481a-bcc3-1a5016bcacbf&la=en&hash=E2FCA633905FA9A7FFA500D711B86B35158395F7
+        run: wget -O gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-linux-gnueabihf.tar.xz https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-linux-gnueabihf.tar.xz?revision=9f9d8e2a-dc64-481a-bcc3-1a5016bcacbf&la=en&hash=E2FCA633905FA9A7FFA500D711B86B35158395F7
       - name: Show files
         run: ls -la
       - name: Unzip GNU toolchain
-        run: tar xzf gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-linux-gnueabihf.tar.xz?revision=9f9d8e2a-dc64-481a-bcc3-1a5016bcacbf
+        run: tar xzf gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-linux-gnueabihf.tar.xz
       - name: Show files
         run: ls -la
 #       - name: Unzip GNU toolchain
