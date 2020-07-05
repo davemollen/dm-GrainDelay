@@ -23,6 +23,8 @@ jobs:
         with:
           version: "8.0"
           directory: ~/.clang
+      - name: Install libc dev package
+        run: sudo apt-get install libc6-dev-i386
       - name: Build
         run: cargo build --release --target armv7-unknown-linux-gnueabihf
 #       - name: Release
