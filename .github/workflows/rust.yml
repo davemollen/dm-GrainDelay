@@ -18,10 +18,13 @@ jobs:
           default: true
           override: true
           target: armv7-unknown-linux-gnueabihf
-      - name: Install libclang
-        run: sudo apt-get install libclang-dev
-      - name: Find libclang.so
-        run: find $GITHUB_WORKSPACE -iname "libclang.so" -print
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "8.0"
+          directory: ~/.clang
+      - name: Show files
+        run: cd /.clang && ls -la
 #       - name: Build
 #         run: cargo build --release --target armv7-unknown-linux-gnueabihf
 #       - name: Release
