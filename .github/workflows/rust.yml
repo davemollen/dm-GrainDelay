@@ -27,7 +27,7 @@ jobs:
       - name: Add GNU toolchain to path
         run: echo "::add-path::$GITHUB_WORKSPACE/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin"
       - name: Install libclang
-        run: apt-get install libclang-dev
+        run: sudo apt-get install libclang-dev
       - name: Find libclang.so
         run: find $GITHUB_WORKSPACE -iname "libclang.so" -print
 #       - name: Build
