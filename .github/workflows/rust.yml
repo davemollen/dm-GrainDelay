@@ -33,11 +33,11 @@ jobs:
         run: echo "::add-path::$GITHUB_WORKSPACE/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin"
       - name: Build
         run: cargo build --release --target armv7-unknown-linux-gnueabihf
-#       - name: Release
-#         uses: softprops/action-gh-release@v1
-#         if: startsWith(github.ref, 'refs/tags/')
-#         with:
-#           files: |
-#             target/armv7-unknown-linux-gnueabihf/release
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/armv7-unknown-linux-gnueabihf/release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
