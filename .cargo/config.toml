@@ -1,5 +1,5 @@
 [build]
-rustflags = ["-C target-feature=+a7,+vfp4", "-C opt-level=3"]
+rustflags = ["-C -O3", "-C -mcpu=cortex-a7", "-C -mtune=cortex-a7", "-C -mfpu=neon-vfpv4", "-C -mfloat-abi=hard", "-C -mvectorize-with-neon-quad"]
 
 [target.armv7-unknown-linux-gnueabihf]
 linker = "arm-none-linux-gnueabihf-gcc"
