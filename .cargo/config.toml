@@ -1,5 +1,5 @@
 [build]
-rustflags = ["-C target-feature=+a7,+vfp4", "-C opt-level=3]
+rustflags = ["-C target-feature=+a7,+vfp4", "-C opt-level=3"]
 
 [target.armv7-unknown-linux-gnueabihf]
 linker = "arm-none-linux-gnueabihf-gcc"
