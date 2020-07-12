@@ -1,4 +1,5 @@
 [build]
+rustflags = ["-C", "target-cpu=native"]
 
 [target.armv7-unknown-linux-gnueabihf]
-linker = "arm-none-linux-gnueabihf-gcc -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad"
+linker = "arm-none-linux-gnueabihf-gcc"
