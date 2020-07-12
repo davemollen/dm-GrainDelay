@@ -2,4 +2,4 @@
 
 [target.armv7-unknown-linux-gnueabihf]
 linker = "arm-none-linux-gnueabihf-gcc"
-rustflags = ["-C", "link-arg=-O3"]
+rustflags = [”-Clink-args=-O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad"]
