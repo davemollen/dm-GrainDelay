@@ -1,13 +1,13 @@
-name: ARMv7 build
+name: MOD Duo build
 
 on:
   push:
     branches: [master]
 
 jobs:
-  linux_arm7:
-    name: Linux ARMv7
-    runs-on: ubuntu-18.04
+  modduo:
+    name: MOD Duo build
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -17,7 +17,7 @@ jobs:
           toolchain: stable
           default: true
           override: true
-          target: aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v1
         with:
@@ -26,10 +26,10 @@ jobs:
       - name: Install libc dev package
         run: sudo apt-get install libc6-dev-i386
       - name: Download GNU toolchain
-        run: sudo apt-get install -qq gcc-7-aarch64-linux-gnu
+        run: sudo apt-get install -qq gcc-4.9-arm-linux-gnueabihf
       - name: Build
-        run: cargo build --release --target aarch64-unknown-linux-gnu
+        run: cargo build --release --target armv7-unknown-linux-gnueabihf
       - uses: actions/upload-artifact@v2
         with:
           name: amp
-          path: target/aarch64-unknown-linux-gnu/release/libamp.so
+          path: target/armv7-unknown-linux-gnueabihf/release/libamp.so

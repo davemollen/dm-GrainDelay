@@ -1,4 +1,7 @@
 [build]
 
+[target.armv7-unknown-linux-gnueabihf]
+linker = "arm-linux-gnueabihf-gcc-4.9"
+
 [target.aarch64-unknown-linux-gnu]
 linker = "aarch64-linux-gnu-gcc-7"
