@@ -25,8 +25,11 @@ jobs:
           directory: ~/.clang
       - name: Install libc dev package
         run: sudo apt-get install libc6-dev-i386
+
+      - name: Add support for gcc-4.9:
+        run: echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main\n deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe" >> /etc/apt/sources.list 
       - name: Download GNU toolchain
-        run: sudo apt-get install -qq gcc-4.9-arm-linux-gnueabihf
+        run: sudo apt-update && apt-get install -qq gcc-4.9-arm-linux-gnueabihf
       - name: Build
         run: cargo build --release --target armv7-unknown-linux-gnueabihf
       - uses: actions/upload-artifact@v2
