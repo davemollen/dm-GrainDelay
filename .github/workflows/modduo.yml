@@ -26,7 +26,7 @@ jobs:
       - name: Install libc dev package
         run: sudo apt-get install libc6-dev-i386
       - name: Add support for gcc-4.9
-        run: echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main\n deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe" | sudo tee -a /etc/apt/sources.list
+        run: echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main\n deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe" | sudo tee -a $GITHUB_WORKSPACE/~/etc/apt/sources.list
       - name: Download GNU toolchain
         run: sudo apt-update && apt-get install -qq gcc-4.9-arm-linux-gnueabihf
       - name: Build
