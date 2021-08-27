@@ -36,7 +36,7 @@ jobs:
           repo: deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe
           repo-name: universe
       - name: Download GNU toolchain
-        run: sudo apt-update && apt-get install -qq gcc-4.9-arm-linux-gnueabihf
+        run: sudo apt-get update && apt-get install -qq gcc-4.9-arm-linux-gnueabihf
       - name: Build
         run: cargo build --release --target armv7-unknown-linux-gnueabihf
       - uses: actions/upload-artifact@v2
