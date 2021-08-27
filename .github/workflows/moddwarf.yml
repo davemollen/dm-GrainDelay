@@ -1,35 +1,35 @@
-# name: MOD Dwarf build
+name: MOD Dwarf build
 
-# on:
-#   push:
-#     branches: [master]
+on:
+  push:
+    branches: [master]
 
-# jobs:
-#   moddwarf:
-#     name: MOD Dwarf build
-#     runs-on: ubuntu-18.04
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v2
-#       - name: Install latest rust toolchain
-#         uses: actions-rs/toolchain@v1
-#         with:
-#           toolchain: stable
-#           default: true
-#           override: true
-#           target: aarch64-unknown-linux-gnu
-#       - name: Install LLVM and Clang
-#         uses: KyleMayes/install-llvm-action@v1
-#         with:
-#           version: "8.0"
-#           directory: ~/.clang
-#       - name: Install libc dev package
-#         run: sudo apt-get install libc6-dev-i386
-#       - name: Download GNU toolchain
-#         run: sudo apt-get install -qq gcc-7-aarch64-linux-gnu
-#       - name: Build
-#         run: cargo build --release --target aarch64-unknown-linux-gnu
-#       - uses: actions/upload-artifact@v2
-#         with:
-#           name: amp
-#           path: target/aarch64-unknown-linux-gnu/release/libamp.so
+jobs:
+  moddwarf:
+    name: MOD Dwarf build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install latest rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+          target: aarch64-unknown-linux-gnu
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "8.0"
+          directory: ~/.clang
+      - name: Install libc dev package
+        run: sudo apt-get install libc6-dev-i386
+      - name: Download GNU toolchain
+        run: sudo apt-get install -qq gcc-7-aarch64-linux-gnu
+      - name: Build
+        run: cargo build --release --target aarch64-unknown-linux-gnu
+      - uses: actions/upload-artifact@v2
+        with:
+          name: amp
+          path: target/aarch64-unknown-linux-gnu/release/libamp.so
