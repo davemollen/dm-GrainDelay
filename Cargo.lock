@@ -10,13 +10,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "amp"
-version = "0.1.0"
-dependencies = [
- "lv2",
-]
-
-[[package]]
 name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -290,6 +283,13 @@ checksum = "0b471253da97532da4b61552249c521e01e736071f71c1a4f7ebbfbf0a06aad6"
 dependencies = [
  "memchr",
  "version_check",
+]
+
+[[package]]
+name = "octaver"
+version = "0.1.0"
+dependencies = [
+ "lv2",
 ]
 
 [[package]]

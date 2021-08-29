@@ -41,5 +41,5 @@ jobs:
         run: cargo build --release --target armv7-unknown-linux-gnueabihf
       - uses: actions/upload-artifact@v2
         with:
-          name: amp
-          path: target/armv7-unknown-linux-gnueabihf/release/libamp.so
+          name: dm_Octaver
+          path: target/armv7-unknown-linux-gnueabihf/release/liboctaver.so
