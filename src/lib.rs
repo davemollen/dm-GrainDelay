@@ -54,13 +54,15 @@ impl Plugin for Octaver {
             } else {
                 amplify
             };
-            let sign = if clip < 0. { 1. } else { 0. };
-            let trigger = self.delta.run(sign) > 0.;
+
+            let is_below_zero = if clip < 0. { 1. } else { 0. };
+            let trigger = self.delta.run(is_below_zero) > 0.;
             if trigger {
                 if self.flip_flop == 1. {
                     self.flip_flop = -1.
-                };
-                self.flip_flop = 1.
+                } else {
+                    self.flip_flop = 1.
+                }
             };
             *out_frame = clip * self.flip_flop * amplification;
         }
