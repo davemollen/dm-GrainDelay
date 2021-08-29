@@ -41,5 +41,5 @@ jobs:
         run: cargo build --release --target armv7-unknown-linux-gnueabihf
       - uses: actions/upload-artifact@v2
         with:
-          name: dm_Octaver
+          name: dm-Octaver
           path: target/armv7-unknown-linux-gnueabihf/release/liboctaver.so

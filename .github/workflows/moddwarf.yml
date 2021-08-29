@@ -31,5 +31,5 @@ jobs:
         run: cargo build --release --target aarch64-unknown-linux-gnu
       - uses: actions/upload-artifact@v2
         with:
-          name: dm_Octaver
+          name: dm-Octaver
           path: target/aarch64-unknown-linux-gnu/release/liboctaver.so
