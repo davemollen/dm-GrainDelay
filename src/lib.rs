@@ -1,4 +1,3 @@
-// Import everything we need.
 extern crate lv2;
 mod delta;
 use delta::Delta;
@@ -6,9 +5,6 @@ mod lowpass;
 use lowpass::Lowpass;
 use lv2::prelude::*;
 
-// The input and output ports are defined by a struct which implements the `PortCollection` trait.
-// In this case, there is an input control port for the gain of the amplification, an input audio
-// port and an output audio port.
 #[derive(PortCollection)]
 struct Ports {
     gain: InputPort<Control>,
@@ -16,19 +12,13 @@ struct Ports {
     output: OutputPort<Audio>,
 }
 
-// The plugin struct. In this case, we don't need any data and therefore, this struct is empty.
-//
-// LV2 uses URIs to identify types. This association is expressed via the `UriBound` trait,
-// which tells the framework that the type `Amp` is identified by the given URI. The usual
-// way to implement this trait is to use the `uri` attribute.
-#[uri("urn:maxgen:dm-Octaver")]
+#[uri("https://github.com/davemollen/dm-Octaver")]
 struct Octaver {
     lowpass: Lowpass,
     delta: Delta,
     flip_flop: f32,
 }
 
-// The implementation of the `Plugin` trait, which turns `Amp` into a plugin.
 impl Plugin for Octaver {
     // Tell the framework which ports this plugin has.
     type Ports = Ports;

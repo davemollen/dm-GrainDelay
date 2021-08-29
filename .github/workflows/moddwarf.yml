@@ -2,7 +2,7 @@ name: MOD Dwarf build
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   moddwarf:
