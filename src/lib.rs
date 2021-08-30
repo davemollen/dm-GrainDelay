@@ -3,11 +3,16 @@ mod delta;
 use delta::Delta;
 mod lowpass;
 use lowpass::Lowpass;
+mod noise_gate;
 use lv2::prelude::*;
+use noise_gate::NoiseGate;
+mod dbtoa;
+use dbtoa::Dbtoa;
 
 #[derive(PortCollection)]
 struct Ports {
     gain: InputPort<Control>,
+    threshold: InputPort<Control>,
     input: InputPort<Audio>,
     output: OutputPort<Audio>,
 }
@@ -16,6 +21,7 @@ struct Ports {
 struct Octaver {
     lowpass: Lowpass,
     delta: Delta,
+    noise_gate: NoiseGate,
     flip_flop: f32,
 }
 
@@ -32,6 +38,7 @@ impl Plugin for Octaver {
         Some(Self {
             lowpass: Lowpass::new(),
             delta: Delta::new(),
+            noise_gate: NoiseGate::new(_plugin_info.sample_rate()),
             flip_flop: 1.,
         })
     }
@@ -39,11 +46,8 @@ impl Plugin for Octaver {
     // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
     // iterates over.
     fn run(&mut self, ports: &mut Ports, _features: &mut ()) {
-        let amplification = if *(ports.gain) > -90.0 {
-            10.0_f32.powf(*(ports.gain) * 0.05)
-        } else {
-            0.0
-        };
+        let gain = Dbtoa::run(*(ports.gain));
+        let threshold = Dbtoa::run(*(ports.threshold));
 
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
             let amplify = self.lowpass.run(*in_frame, 0.9997) * 10000.;
@@ -64,7 +68,7 @@ impl Plugin for Octaver {
                     self.flip_flop = 1.
                 }
             };
-            *out_frame = clip * self.flip_flop * amplification;
+            *out_frame = self.noise_gate.run(clip * self.flip_flop * gain, threshold);
         }
     }
 }
