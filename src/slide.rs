@@ -14,7 +14,7 @@ impl Slide {
     let slide = if x > self.z {
       (x - self.z) * (1. / self.ms_to_samples(slide_up))
     } else {
-      (x - self.z) * (1. / self.ms_to_samples(slide_down)
+      (x - self.z) * (1. / self.ms_to_samples(slide_down))
     };
     let y = slide + self.z;
     self.z = y;
