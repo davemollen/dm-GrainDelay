@@ -9,7 +9,7 @@ A harsh octave down effect written in Rust.
 
 ## Description
 
-This lv2 plugin has been written to run on Mod devices. [Github Actions](https://github.com/davemollen/dm-Octaver/actions) are used to build the binary. There's a build pipeline for both the Mod Duo and the Mod Dwarf. To my understanding the Mod Dwarf should also run fine on the Mod Duo X, but this has not been tested yet.
+This lv2 plugin has been written to run on Mod devices. [Github Actions](https://github.com/davemollen/dm-Octaver/actions) are used to build the binary. There's a build pipeline for both the Mod Duo and the Mod Dwarf. To my understanding the Mod Dwarf build should also run fine on the Mod Duo X, but this has not been tested yet.
 
 ## Install instructions
 
