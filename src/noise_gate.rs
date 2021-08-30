@@ -22,7 +22,7 @@ impl NoiseGate {
     } else {
       0.
     };
-    let envelope = self.slide.run(is_above_threshold, 441., 4410.);
+    let envelope = self.slide.run(is_above_threshold, 2., 120.);
     x * envelope
   }
 }
