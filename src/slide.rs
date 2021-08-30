@@ -10,11 +10,11 @@ impl Slide {
   fn ms_to_samples(&mut self, milliseconds: f32) -> f32 {
     1000. / milliseconds * (self.sample_rate as f32)
   }
-  pub fn run(&mut self, x: f32, slide_up: f32, slide_down: f32) -> f32 {
+  pub fn run(&mut self, x: f32, attack: f32, release: f32) -> f32 {
     let slide = if x > self.z {
-      (x - self.z) * (1. / self.ms_to_samples(slide_up))
+      (x - self.z) * (1. / self.ms_to_samples(attack))
     } else {
-      (x - self.z) * (1. / self.ms_to_samples(slide_down))
+      (x - self.z) * (1. / self.ms_to_samples(release))
     };
     let y = slide + self.z;
     self.z = y;
