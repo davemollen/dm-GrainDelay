@@ -50,7 +50,8 @@ impl Plugin for Octaver {
         let threshold = Dbtoa::run(*(ports.threshold));
 
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-            let amplify = self.lowpass.run(*in_frame, 0.9997) * 10000.;
+            let gate = self.noise_gate.run(*in_frame, threshold);
+            let amplify = self.lowpass.run(gate, 0.9997) * 10000.;
             let clip = if amplify > 1. {
                 1.
             } else if amplify < -1. {
@@ -68,7 +69,7 @@ impl Plugin for Octaver {
                     self.flip_flop = 1.
                 }
             };
-            *out_frame = self.noise_gate.run(clip * self.flip_flop * gain, threshold);
+            *out_frame = clip * self.flip_flop * gain;
         }
     }
 }
