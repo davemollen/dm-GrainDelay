@@ -6,20 +6,23 @@ A harsh octave down effect written in Rust.
 
 - [Description](#Description)
 - [Install instructions](#Install-instructions)
+- [License](#License)
 
 ## Description
 
 This lv2 plugin has been written to run on Mod devices. [Github Actions](https://github.com/davemollen/dm-Octaver/actions) are used to build the binaries. There's a build pipeline for both the Mod Duo and the Mod Dwarf. To my understanding the Mod Dwarf build should also run fine on the Mod Duo X, but this has not been tested yet.
 
+## Description
+
 Feel free to use this code for your own purposes. If you want to compile this for vst for example, you could just use the core audio processing in [`./src/octaver`](./src/octaver).
 
-Initialize first:
+- Initialize first:
 
 ```
 octaver: Octaver::new(_plugin_info.sample_rate())
 ```
 
-Then run:
+- Then run:
 
 ```
 self.octaver.run(input: f32, threshold: f32, gain: f32)
@@ -35,3 +38,16 @@ self.octaver.run(input: f32, threshold: f32, gain: f32)
 
 - Enter Mod password
 - Reboot Mod
+
+## License
+
+Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
+
+This work is licensed under a
+[Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
+
+[![CC BY-SA 4.0][cc-by-sa-image]][cc-by-sa]
+
+[cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
+[cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
+[cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
