@@ -40,7 +40,7 @@ impl Plugin for DmOctaver {
         let threshold = Dbtoa::run(*(ports.threshold));
 
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-            *out_frame = self.octaver.run(*in_frame, gain, threshold);
+            *out_frame = self.octaver.run(*in_frame, threshold, gain);
         }
     }
 }
