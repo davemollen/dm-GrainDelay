@@ -1,13 +1,9 @@
 extern crate lv2;
-mod delta;
-use delta::Delta;
-mod lowpass;
-use lowpass::Lowpass;
-mod noise_gate;
 use lv2::prelude::*;
-use noise_gate::NoiseGate;
 mod dbtoa;
 use dbtoa::Dbtoa;
+mod octaver;
+use octaver::Octaver;
 
 #[derive(PortCollection)]
 struct Ports {
@@ -18,14 +14,11 @@ struct Ports {
 }
 
 #[uri("https://github.com/davemollen/dm-Octaver")]
-struct Octaver {
-    lowpass: Lowpass,
-    delta: Delta,
-    noise_gate: NoiseGate,
-    flip_flop: f32,
+struct DmOctaver {
+    octaver: Octaver,
 }
 
-impl Plugin for Octaver {
+impl Plugin for DmOctaver {
     // Tell the framework which ports this plugin has.
     type Ports = Ports;
 
@@ -36,10 +29,7 @@ impl Plugin for Octaver {
     // Create a new instance of the plugin; Trivial in this case.
     fn new(_plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
         Some(Self {
-            lowpass: Lowpass::new(),
-            delta: Delta::new(),
-            noise_gate: NoiseGate::new(_plugin_info.sample_rate()),
-            flip_flop: 1.,
+            octaver: Octaver::new(_plugin_info.sample_rate()),
         })
     }
 
@@ -50,29 +40,10 @@ impl Plugin for Octaver {
         let threshold = Dbtoa::run(*(ports.threshold));
 
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-            let gate = self.noise_gate.run(*in_frame, threshold);
-            let amplify = self.lowpass.run(gate, 0.9997) * 10000.;
-            let clip = if amplify > 1. {
-                1.
-            } else if amplify < -1. {
-                -1.
-            } else {
-                amplify
-            };
-
-            let is_below_zero = if clip < 0. { 1. } else { 0. };
-            let trigger = self.delta.run(is_below_zero) > 0.;
-            if trigger {
-                if self.flip_flop == 1. {
-                    self.flip_flop = -1.
-                } else {
-                    self.flip_flop = 1.
-                }
-            };
-            *out_frame = clip * self.flip_flop * gain;
+            *out_frame = self.octaver.run(*in_frame, gain, threshold);
         }
     }
 }
 
 // Generate the plugin descriptor function which exports the plugin to the outside world.
-lv2_descriptors!(Octaver);
+lv2_descriptors!(DmOctaver);
