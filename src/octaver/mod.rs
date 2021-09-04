@@ -22,7 +22,7 @@ impl Octaver {
     }
   }
   pub fn run(&mut self, input: f32, threshold: f32, gain: f32) -> f32 {
-    let gate = self.noise_gate.run(input, threshold);
+    let gate = self.noise_gate.run(input, threshold, 2., 120.);
     let amplify = self.lowpass.run(gate, 0.9997) * 10000.;
     let clip = if amplify > 1. {
       1.

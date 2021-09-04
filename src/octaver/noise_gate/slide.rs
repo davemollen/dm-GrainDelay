@@ -21,3 +21,19 @@ impl Slide {
     y
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn slide_one() {
+    let mut slide = Slide::new(1.);
+    assert_eq!(slide.run(1., 10., 100.), 0.01);
+  }
+  #[test]
+  fn slide_two() {
+    let mut slide = Slide::new(1.);
+    assert_eq!(slide.run(-1., 10., 100.), -0.1);
+  }
+}
