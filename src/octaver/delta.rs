@@ -3,8 +3,8 @@ pub struct Delta {
 }
 
 impl Delta {
-  pub fn new() -> Delta {
-    Delta { z: 0. }
+  pub fn new() -> Self {
+    Self { z: 0. }
   }
   pub fn run(&mut self, x: f32) -> f32 {
     let y = x - self.z;

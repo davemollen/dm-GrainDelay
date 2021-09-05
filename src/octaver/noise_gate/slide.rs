@@ -4,8 +4,8 @@ pub struct Slide {
 }
 
 impl Slide {
-  pub fn new(sample_rate: f64) -> Slide {
-    Slide { z: 0., sample_rate }
+  pub fn new(sample_rate: f64) -> Self {
+    Self { z: 0., sample_rate }
   }
   fn ms_to_samples(&mut self, milliseconds: f32) -> f32 {
     1000. / milliseconds * (self.sample_rate as f32)

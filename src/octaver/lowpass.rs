@@ -3,8 +3,8 @@ pub struct Lowpass {
 }
 
 impl Lowpass {
-  pub fn new() -> Lowpass {
-    Lowpass { z: 0. }
+  pub fn new() -> Self {
+    Self { z: 0. }
   }
   fn mix(&mut self, a: f32, b: f32, interp: f32) -> f32 {
     a * (1. - interp) + b * interp
