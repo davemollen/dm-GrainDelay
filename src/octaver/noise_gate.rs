@@ -1,5 +1,4 @@
-mod slide;
-use self::slide::Slide;
+use super::slide::Slide;
 
 pub struct NoiseGate {
   slide: Slide,
