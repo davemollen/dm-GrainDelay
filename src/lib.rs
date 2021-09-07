@@ -29,7 +29,7 @@ impl Plugin for DmOctaver {
     // Create a new instance of the plugin; Trivial in this case.
     fn new(_plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
         Some(Self {
-            octaver: Octaver::new(_plugin_info.sample_rate()),
+            octaver: Octaver::new(48000.),
         })
     }
 

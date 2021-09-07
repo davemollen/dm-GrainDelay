@@ -10,7 +10,7 @@ pub struct Octaver {
 }
 
 impl Octaver {
-  pub fn new(sample_rate: f64) -> Self {
+  pub fn new(sample_rate: f32) -> Self {
     Self {
       lowpass: Lowpass::new(),
       delta: Delta::new(),

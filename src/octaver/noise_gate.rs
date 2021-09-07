@@ -5,7 +5,7 @@ pub struct NoiseGate {
 }
 
 impl NoiseGate {
-  pub fn new(sample_rate: f64) -> Self {
+  pub fn new(sample_rate: f32) -> Self {
     Self {
       slide: Slide::new(sample_rate),
     }
