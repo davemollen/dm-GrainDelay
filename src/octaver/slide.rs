@@ -8,7 +8,7 @@ impl Slide {
     Self { z: 0., sample_rate }
   }
   fn ms_to_samples(&mut self, milliseconds: f32) -> f32 {
-    1000. / milliseconds * (self.sample_rate as f32)
+    milliseconds / 1000. * (self.sample_rate as f32)
   }
   pub fn run(&mut self, x: f32, attack: f32, release: f32) -> f32 {
     let slide = if x > self.z {
@@ -28,12 +28,17 @@ mod tests {
 
   #[test]
   fn slide_one() {
-    let mut slide = Slide::new(1.);
-    assert_eq!(slide.run(1., 10., 100.), 0.01);
+    let mut slide = Slide::new(1000.);
+    assert_eq!(slide.run(1., 10., 100.), 0.1);
   }
   #[test]
   fn slide_two() {
-    let mut slide = Slide::new(1.);
-    assert_eq!(slide.run(-1., 10., 100.), -0.1);
+    let mut slide = Slide::new(1000.);
+    assert_eq!(slide.run(-1., 10., 100.), -0.01);
+  }
+  #[test]
+  fn mstosamps() {
+    let mut slide = Slide::new(44100.);
+    assert_eq!(slide.ms_to_samples(2000.), 88200.);
   }
 }

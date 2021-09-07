@@ -23,13 +23,13 @@ mod tests {
 
   #[test]
   fn noise_gate_one() {
-    let mut noise_gate = NoiseGate::new(1.);
-    assert_eq!(noise_gate.run(1., 0.5, 10., 100.), 0.01);
+    let mut noise_gate = NoiseGate::new(1000.);
+    assert_eq!(noise_gate.run(1., 0.5, 10., 100.), 0.1);
   }
   #[test]
   fn noise_gate_two() {
-    let mut noise_gate = NoiseGate::new(1.);
-    assert_eq!(noise_gate.run(1., 0., 1000., 0.), 1.);
-    assert_eq!(noise_gate.run(1., 1., 10., 200.), 0.8);
+    let mut noise_gate = NoiseGate::new(1000.);
+    assert_eq!(noise_gate.run(1., 0., 1., 0.), 1.);
+    assert_eq!(noise_gate.run(1., 1., 10., 100.), 0.99);
   }
 }
