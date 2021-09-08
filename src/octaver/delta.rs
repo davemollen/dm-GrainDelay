@@ -6,9 +6,9 @@ impl Delta {
   pub fn new() -> Self {
     Self { z: 0. }
   }
-  pub fn run(&mut self, x: f32) -> f32 {
-    let y = x - self.z;
-    self.z = x;
-    y
+  pub fn run(&mut self, input: f32) -> f32 {
+    let output = input - self.z;
+    self.z = input;
+    output
   }
 }

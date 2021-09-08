@@ -1,3 +1,4 @@
+mod clip;
 mod delta;
 mod lowpass;
 mod noise_gate;
