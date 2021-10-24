@@ -1,9 +1,9 @@
 extern crate lv2;
 use lv2::prelude::*;
-mod dbtoa;
-use dbtoa::Dbtoa;
 mod octaver;
 use octaver::Octaver;
+mod dbtoa;
+use dbtoa::Dbtoa;
 
 #[derive(PortCollection)]
 struct Ports {
@@ -36,9 +36,8 @@ impl Plugin for DmOctaver {
     // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
     // iterates over.
     fn run(&mut self, ports: &mut Ports, _features: &mut ()) {
-        let gain = Dbtoa::run(*(ports.gain));
-        let threshold = Dbtoa::run(*(ports.threshold));
-
+        let gain = Dbtoa::run(*ports.gain);
+        let threshold = Dbtoa::run(*ports.threshold);
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
             *out_frame = self.octaver.run(*in_frame, threshold, gain);
         }
