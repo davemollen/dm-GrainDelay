@@ -5,33 +5,25 @@ A harsh octave down effect written in Rust.
 ## Table of contents:
 
 - [Description](#Description)
-- [Reuse](#Reuse)
+- [Build](#Build)
 - [Install instructions](#Install-instructions)
+- [GUI](#GUI)
 - [License](#License)
 
 ## Description
 
-This lv2 plugin has been written to run on Mod devices. [Github Actions](https://github.com/davemollen/dm-Octaver/actions) are used to build the binaries. There's a build pipeline for both the Mod Duo and the Mod Dwarf. To my understanding the Mod Dwarf build should also run fine on the Mod Duo X, but this has not been tested yet. Just download the artifacts to use the binaries.
+This [lv2 plugin](./dm-Octaver.lv2) has been written to run on Mod devices. In this repository you can find the source code written in Rust and a docker build pipeline for the Mod Duo and Mod Dwarf binaries. Follow the steps below to deploy the plugin to your Mod device and/or build for a different Mod platform.
 
-## Reuse
+## Build
 
-If you would like to use this code for other purposes, you could just use the core audio processing in [`./src/octaver`](./src/octaver).
+In order to build the binaries you need to have Docker installed. If so, proceed with the following steps:
 
-- Initialize first:
-
-```
-octaver: Octaver::new(_plugin_info.sample_rate())
-```
-
-- Then run:
-
-```
-self.octaver.run(input: f32, threshold: f32, gain: f32)
-```
+- Run `./build.sh` in the root directory.
+- Copy/paste the binary of the target platform from the [out](./out) directory into dm-Octaver.lv2
 
 ## Install instructions
 
-- Copy the LV2 folder into your Mod:
+- Copy the .lv2 folder into your Mod:
 
   ```
   scp -rp <path to dm-Octaver.lv2> root@192.168.51.1:/root/.lv2
@@ -39,6 +31,10 @@ self.octaver.run(input: f32, threshold: f32, gain: f32)
 
 - Enter Mod password
 - Reboot Mod
+
+## GUI
+
+The GUI was built with the [MOD SDK](https://github.com/moddevices/mod-sdk)
 
 ## License
 
