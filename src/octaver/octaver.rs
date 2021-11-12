@@ -1,6 +1,7 @@
 use super::clip::Clip;
 use super::delta::Delta;
 use super::lowpass::Lowpass;
+use super::mix::Mix;
 use super::noise_gate::NoiseGate;
 
 pub struct Octaver {
@@ -19,11 +20,11 @@ impl Octaver {
       flip_flop: 1.,
     }
   }
-  pub fn run(&mut self, input: f32, threshold: f32, gain: f32) -> f32 {
-    let gated = self.noise_gate.run(input, threshold, 1.5, 30.);
-    let lowpassed = self.lowpass.run(gated, 2.);
-    let clipped = Clip::run(lowpassed * 10000., -1., 1.);
-    let is_below_zero = if clipped < 0. { 1. } else { 0. };
+  pub fn run(&mut self, input: f32, threshold: f32, gain: f32, mix: f32) -> f32 {
+    let gate = self.noise_gate.run(input, threshold, 1.5, 30.);
+    let lowpass = self.lowpass.run(gate, 2.);
+    let clip = Clip::run(lowpass * 10000., -1., 1.);
+    let is_below_zero = if clip < 0. { 1. } else { 0. };
     let trigger = self.delta.run(is_below_zero) > 0.;
     if trigger {
       if self.flip_flop == 1. {
@@ -32,6 +33,7 @@ impl Octaver {
         self.flip_flop = 1.
       }
     };
-    clipped * self.flip_flop * gain
+    let octaver = clip * self.flip_flop * gain;
+    Mix::run(input, octaver, mix)
   }
 }
