@@ -35,4 +35,4 @@ RUN cargo build --release --target aarch64-unknown-linux-gnu
 
 # Export
 FROM scratch AS moddwarf-export
-COPY --from=moddwarf-build /target/aarch64-unknown-linux-gnu/release/liboctaver.so .
+COPY --from=moddwarf-build /target/aarch64-unknown-linux-gnu/release/libgraindelay.so .

@@ -1,5 +1,5 @@
 [package]
-name = "octaver"
+name = "graindelay"
 version = "0.1.0"
 authors = ["davemollen <davemollen@gmail.com>"]
 
@@ -7,6 +7,7 @@ authors = ["davemollen <davemollen@gmail.com>"]
 
 [dependencies]
 lv2 = "0.5.1"
+rand = "0.8.4"
 
 [lib]
 crate-type = ["cdylib"]

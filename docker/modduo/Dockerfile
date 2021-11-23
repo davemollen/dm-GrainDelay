@@ -35,4 +35,4 @@ RUN cargo build --release --target armv7-unknown-linux-gnueabihf
 
 # Export
 FROM scratch AS modduo-export
-COPY --from=modduo-build /target/armv7-unknown-linux-gnueabihf/release/liboctaver.so .
+COPY --from=modduo-build /target/armv7-unknown-linux-gnueabihf/release/libgraindelay.so .

@@ -1,0 +1,23 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+
+<https://github.com/davemollen/dm-GrainDelay>
+
+    a lv2:Plugin ;
+
+    lv2:binary <libgraindelay.so> ;
+
+    rdfs:seeAlso <dm-GrainDelay_dsp.ttl> .
+
+
+
+
+
+
+<https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#releaseNumber> 0 .
+<https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#builderVersion> 1 .
+<https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#buildId> 312 .
+<https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#buildEnvironment> "rustgen" .
