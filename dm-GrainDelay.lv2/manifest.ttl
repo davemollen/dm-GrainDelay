@@ -21,3 +21,4 @@
 <https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#builderVersion> 1 .
 <https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#buildId> 310 .
 <https://github.com/davemollen/dm-GrainDelay> <http://moddevices.com/ns/mod#buildEnvironment> "rustgen" .
+<https://github.com/davemollen/dm-GrainDelay> rdfs:seeAlso <modgui.ttl> .
