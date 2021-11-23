@@ -7,8 +7,8 @@ use graindelay::GrainDelay;
 #[derive(PortCollection)]
 struct Ports {
     spray: InputPort<Control>,
-    pitch: InputPort<Control>,
     frequency: InputPort<Control>,
+    pitch: InputPort<Control>,
     rand_pitch: InputPort<Control>,
     delay_time: InputPort<Control>,
     feedback: InputPort<Control>,
@@ -40,10 +40,10 @@ impl Plugin for DmGrainDelay {
     // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
     // iterates over.
     fn run(&mut self, ports: &mut Ports, _features: &mut ()) {
-        let pitch = *ports.pitch;
         let spray = *ports.spray;
         let frequency = *ports.frequency;
-        let rand_pitch = *ports.rand_pitch;
+        let pitch = *ports.pitch;
+        let rand_pitch = *ports.rand_pitch * 0.01;
         let delay_time = *ports.delay_time;
         let feedback = *ports.feedback * 0.01;
         let mix = *ports.mix * 0.01;
