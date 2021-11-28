@@ -1,8 +1,6 @@
 extern crate lv2;
-extern crate rand;
+use grain_delay::GrainDelay;
 use lv2::prelude::*;
-mod graindelay;
-use graindelay::GrainDelay;
 
 #[derive(PortCollection)]
 struct Ports {
@@ -50,7 +48,7 @@ impl Plugin for DmGrainDelay {
 
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
             *out_frame = self.grain_delay.run(
-                *in_frame, pitch, spray, frequency, rand_pitch, delay_time, feedback, mix,
+                *in_frame, spray, frequency, pitch, rand_pitch, delay_time, feedback, mix,
             );
         }
     }

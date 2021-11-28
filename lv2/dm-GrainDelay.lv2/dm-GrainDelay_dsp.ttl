@@ -18,9 +18,9 @@
 		lv2:symbol "spray" ;
 		lv2:name "Spray" ;
 		lv2:portProperty epp:logarithmic ;
-		lv2:default 250.0 ;
-		lv2:minimum 20.0 ;
-		lv2:maximum 5000.0 ;
+		lv2:default 2.0 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 500.0 ;
 		units:unit units:ms
 	], [
 		a lv2:InputPort, lv2:ControlPort ;

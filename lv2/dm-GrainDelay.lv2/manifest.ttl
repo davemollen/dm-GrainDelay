@@ -8,7 +8,7 @@
 
     a lv2:Plugin ;
 
-    lv2:binary <libgraindelay.so> ;
+    lv2:binary <libdm_graindelay.so> ;
 
     rdfs:seeAlso <dm-GrainDelay_dsp.ttl> .
 
