@@ -27,7 +27,7 @@ impl GrainDelay {
       smooth_frequency: Lowpass::new(sample_rate),
       lowpass: Lowpass::new(sample_rate),
       phasor: Phasor::new(sample_rate),
-      delta: vec![Delta::new(), Delta::new(), Delta::new(), Delta::new()],
+      delta: vec![Delta::new(); 4],
       start_position: vec![0.0; 4],
       rand_pitch: vec![0.0; 4],
     }
