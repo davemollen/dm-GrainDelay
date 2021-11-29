@@ -10,6 +10,7 @@ struct Ports {
     rand_pitch: InputPort<Control>,
     delay_time: InputPort<Control>,
     feedback: InputPort<Control>,
+    low_cut: InputPort<Control>,
     mix: InputPort<Control>,
     input: InputPort<Audio>,
     output: OutputPort<Audio>,
@@ -44,11 +45,12 @@ impl Plugin for DmGrainDelay {
         let rand_pitch = *ports.rand_pitch * 0.01;
         let delay_time = *ports.delay_time;
         let feedback = *ports.feedback * 0.01;
+        let low_cut = *ports.low_cut;
         let mix = *ports.mix * 0.01;
 
         for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
             *out_frame = self.grain_delay.run(
-                *in_frame, spray, frequency, pitch, rand_pitch, delay_time, feedback, mix,
+                *in_frame, spray, frequency, pitch, rand_pitch, delay_time, feedback, low_cut, mix,
             );
         }
     }

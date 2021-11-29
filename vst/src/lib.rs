@@ -21,6 +21,7 @@ struct GrainDelayParameters {
     rand_pitch: AtomicFloat,
     delay_time: AtomicFloat,
     feedback: AtomicFloat,
+    low_cut: AtomicFloat,
     mix: AtomicFloat,
 }
 
@@ -33,6 +34,7 @@ impl Default for GrainDelayParameters {
             rand_pitch: AtomicFloat::new(0.),
             delay_time: AtomicFloat::new(0.),
             feedback: AtomicFloat::new(0.),
+            low_cut: AtomicFloat::new(5000.),
             mix: AtomicFloat::new(0.5),
         }
     }
@@ -68,7 +70,7 @@ impl Plugin for DmGrainDelay {
             name: "dm-GrainDelay".to_string(),
             inputs: 1,
             outputs: 1,
-            parameters: 7,
+            parameters: 8,
             unique_id: 1358,
             ..Default::default()
         }
@@ -81,6 +83,7 @@ impl Plugin for DmGrainDelay {
         let rand_pitch = self.params.rand_pitch.get();
         let delay_time = self.params.delay_time.get();
         let feedback = self.params.feedback.get();
+        let low_cut = self.params.low_cut.get();
         let mix = self.params.mix.get();
 
         for (input_buffer, output_buffer) in buffer.zip() {
@@ -93,6 +96,7 @@ impl Plugin for DmGrainDelay {
                     rand_pitch,
                     delay_time,
                     feedback,
+                    low_cut,
                     mix,
                 );
             }
@@ -113,7 +117,8 @@ impl PluginParameters for GrainDelayParameters {
             3 => self.rand_pitch.get(),
             4 => self.delay_time.get(),
             5 => self.feedback.get(),
-            6 => self.mix.get(),
+            6 => self.low_cut.get(),
+            7 => self.mix.get(),
             _ => 0.0,
         }
     }
@@ -126,7 +131,8 @@ impl PluginParameters for GrainDelayParameters {
             3 => format!("{:.2}%", self.rand_pitch.get() * 100.0),
             4 => format!("{:.2} ms", self.delay_time.get()),
             5 => format!("{:.2}%", self.feedback.get() * 100.0),
-            6 => format!("{:.2}%", self.mix.get() * 100.0),
+            6 => format!("{:.2} hz", self.low_cut.get()),
+            7 => format!("{:.2}%", self.mix.get() * 100.0),
             _ => "".to_string(),
         }
     }
@@ -139,7 +145,8 @@ impl PluginParameters for GrainDelayParameters {
             3 => "Rand Pitch",
             4 => "Time",
             5 => "Feedback",
-            6 => "Mix",
+            6 => "Low Cut",
+            7 => "Mix",
             _ => "",
         }
         .to_string()
@@ -153,7 +160,8 @@ impl PluginParameters for GrainDelayParameters {
             3 => self.rand_pitch.set(val),
             4 => self.delay_time.set(val.powf(3.) * 5000.),
             5 => self.feedback.set(val),
-            6 => self.mix.set(val),
+            6 => self.low_cut.set(val.powf(3.) * 19980. + 20.),
+            7 => self.mix.set(val),
             _ => (),
         }
     }

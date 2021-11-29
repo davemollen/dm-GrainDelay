@@ -11,6 +11,7 @@ pub struct GrainDelay {
   delay: DelayLine,
   smooth_time: Lowpass,
   smooth_frequency: Lowpass,
+  lowpass: Lowpass,
   phasor: Phasor,
   delta: Vec<Delta>,
   start_position: Vec<f32>,
@@ -24,6 +25,7 @@ impl GrainDelay {
       delay: DelayLine::new(sample_rate as usize * 5, sample_rate),
       smooth_time: Lowpass::new(sample_rate),
       smooth_frequency: Lowpass::new(sample_rate),
+      lowpass: Lowpass::new(sample_rate),
       phasor: Phasor::new(sample_rate),
       delta: vec![Delta::new(), Delta::new(), Delta::new(), Delta::new()],
       start_position: vec![0.0; 4],
@@ -38,17 +40,22 @@ impl GrainDelay {
     let main_phasor = self.phasor.run(phasor_freq);
     let mut out = 0f32;
 
-    for index in 0..4 {
-      let phasor = (main_phasor + (index as f32 / 4.)) % 1.;
-      let trigger = self.delta[index].run(phasor).abs() > 0.;
+    for i in 0..4 {
+      let phasor = (main_phasor + (i as f32 / 4.)) % 1.;
+      let delta = self.delta[i].run(phasor);
+      let trigger = if phasor_freq > 0. {
+        delta < 0.
+      } else {
+        delta > 0.
+      };
       if trigger {
         let noise: f32 = rand::thread_rng().gen();
-        self.start_position[index] = noise * spray;
-        self.rand_pitch[index] = noise * rand_pitch * 0.2 + 1.;
+        self.start_position[i] = noise * spray;
+        self.rand_pitch[i] = noise * rand_pitch * 0.2 + 1.;
       };
       let windowing = ((phasor - 0.5) * f32::consts::PI).cos();
       out += self.pitchshift.read(
-        phasor * window_size * self.rand_pitch[index] + self.start_position[index],
+        phasor * window_size * self.rand_pitch[i] + self.start_position[i],
         "linear",
       ) * windowing
         * windowing;
@@ -65,6 +72,7 @@ impl GrainDelay {
     rand_pitch: f32,
     delay_time: f32,
     feedback: f32,
+    low_cut: f32,
     mix: f32,
   ) -> f32 {
     let time = self.smooth_time.run(delay_time, 3.);
@@ -72,7 +80,9 @@ impl GrainDelay {
 
     let delay = self.delay.read(time, "linear");
     let pitchshift = self.grain_delay(spray, freq, pitch, rand_pitch);
-    self.delay.write(input + pitchshift * feedback);
+    self
+      .delay
+      .write(input + self.lowpass.run(pitchshift * 0.5 * feedback, low_cut));
     self.pitchshift.write(delay);
     Mix::run(input, pitchshift, mix)
   }

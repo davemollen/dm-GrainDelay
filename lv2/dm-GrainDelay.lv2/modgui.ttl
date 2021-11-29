@@ -11,7 +11,7 @@
         modgui:brand "dm" ;
         modgui:label "Grain Delay" ;
         modgui:model "boxy" ;
-        modgui:panel "7-knobs" ;
+        modgui:panel "8-knobs" ;
         modgui:color "white" ;
         modgui:knob "silver" ;
         modgui:port [
@@ -40,6 +40,10 @@
             lv2:name "Feedback" ;
         ] , [
             lv2:index 6 ;
+            lv2:symbol "low_cut" ;
+            lv2:name "Low Cut" ;
+        ] , [
+            lv2:index 7 ;
             lv2:symbol "mix" ;
             lv2:name "Mix" ;
         ] ;
