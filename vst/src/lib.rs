@@ -111,13 +111,13 @@ impl Plugin for DmGrainDelay {
 impl PluginParameters for GrainDelayParameters {
     fn get_parameter(&self, index: i32) -> f32 {
         match index {
-            0 => self.spray.get(),
-            1 => self.frequency.get(),
-            2 => self.pitch.get(),
+            0 => (self.spray.get() / 500.).powf(0.333333),
+            1 => ((self.frequency.get() - 1.) / 149.).powf(0.333333),
+            2 => (self.pitch.get() + 24.) / 48.,
             3 => self.rand_pitch.get(),
-            4 => self.delay_time.get(),
+            4 => (self.delay_time.get() / 5000.).powf(0.333333),
             5 => self.feedback.get(),
-            6 => self.low_cut.get(),
+            6 => ((self.low_cut.get() + 20.) / 19980.).powf(0.333333),
             7 => self.mix.get(),
             _ => 0.0,
         }
