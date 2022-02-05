@@ -2,4 +2,3 @@ target
 lv2/out
 .DS_Store
 vst/build.sh
-vst/dm-Reverse.vst
