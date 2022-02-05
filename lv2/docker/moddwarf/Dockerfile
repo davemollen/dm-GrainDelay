@@ -31,8 +31,8 @@ RUN rustup target add aarch64-unknown-linux-gnu
 COPY ./ ./
 
 # Build 
-RUN cargo build --release --target aarch64-unknown-linux-gnu
+RUN cd lv2 && cargo build --release --target aarch64-unknown-linux-gnu
 
 # Export
 FROM scratch AS moddwarf-export
-COPY --from=moddwarf-build /target/aarch64-unknown-linux-gnu/release/libdm_graindelay.so .
+COPY --from=moddwarf-build lv2/target/aarch64-unknown-linux-gnu/release/libdm_graindelay.so .

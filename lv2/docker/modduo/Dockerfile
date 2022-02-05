@@ -31,8 +31,8 @@ RUN rustup target add armv7-unknown-linux-gnueabihf
 COPY ./ ./
 
 # Build 
-RUN cargo build --release --target armv7-unknown-linux-gnueabihf
+RUN cd lv2 && cargo build --release --target armv7-unknown-linux-gnueabihf
 
 # Export
 FROM scratch AS modduo-export
-COPY --from=modduo-build /target/armv7-unknown-linux-gnueabihf/release/libdm_graindelay.so .
+COPY --from=modduo-build lv2/target/armv7-unknown-linux-gnueabihf/release/libdm_graindelay.so .
