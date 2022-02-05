@@ -2,7 +2,7 @@
 
 A granular delay effect written in Rust.
 The effect can be compiled to a [vst](./vst) or [lv2](./lv2) plugin.
-This plugin is mono for now.
+This plugin is mono for now. The primary goal for this project is to run this code on a [mod device](https://moddevices.com/).
 
 ## License
 
