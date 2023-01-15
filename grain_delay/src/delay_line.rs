@@ -3,11 +3,11 @@ use std::f32;
 pub struct DelayLine {
   buffer: Vec<f32>,
   write_pointer: usize,
-  sample_rate: f64,
+  sample_rate: f32,
 }
 
 impl DelayLine {
-  pub fn new(length: usize, sample_rate: f64) -> Self {
+  pub fn new(length: usize, sample_rate: f32) -> Self {
     Self {
       buffer: vec![0.0; length],
       write_pointer: 0,

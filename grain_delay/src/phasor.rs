@@ -1,10 +1,10 @@
 pub struct Phasor {
-  sample_rate: f64,
+  sample_rate: f32,
   x: f32,
 }
 
 impl Phasor {
-  pub fn new(sample_rate: f64) -> Self {
+  pub fn new(sample_rate: f32) -> Self {
     Self { sample_rate, x: 0. }
   }
 

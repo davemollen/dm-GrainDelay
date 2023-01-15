@@ -19,7 +19,7 @@ pub struct GrainDelay {
 }
 
 impl GrainDelay {
-  pub fn new(sample_rate: f64) -> Self {
+  pub fn new(sample_rate: f32) -> Self {
     Self {
       pitchshift: DelayLine::new((sample_rate * 1.5) as usize, sample_rate),
       delay: DelayLine::new(sample_rate as usize * 5, sample_rate),
