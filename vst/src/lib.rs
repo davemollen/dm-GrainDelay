@@ -5,7 +5,7 @@ use grain_delay::GrainDelay;
 use std::sync::Arc;
 use vst::{
   buffer::AudioBuffer,
-  plugin::{Info, Plugin, PluginParameters},
+  plugin::{Category, Info, Plugin, PluginParameters},
   util::AtomicFloat,
 };
 
@@ -64,6 +64,7 @@ impl Plugin for DmGrainDelay {
       parameters: 8,
       unique_id: 1358,
       f64_precision: true,
+      category: Category::Effect,
       ..Default::default()
     }
   }
