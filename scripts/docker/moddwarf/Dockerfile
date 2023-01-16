@@ -3,6 +3,10 @@ FROM ubuntu:18.04 as moddwarf-build
 # Set root user
 USER root
 
+# Set binary name
+ARG BINARY_NAME
+ENV BINARY_NAME=$BINARY_NAME
+
 # Update default packages
 RUN apt-get update
 
@@ -12,11 +16,11 @@ RUN apt-get install -y \
     curl \ 
     gcc-7-aarch64-linux-gnu \
     libc6-dev-i386
-    
+
 # Get LLVM
 RUN curl -SL https://releases.llvm.org/8.0.0/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz \
- | tar -xJC . && \
- mv clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04 llvm
+    | tar -xJC . && \
+    mv clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04 llvm
 ENV PATH="/llvm/bin:$PATH"
 ENV LLVM_PATH="/llvm:$LLVM_PATH"
 ENV LD_LIBRARY_PATH="/llvm/lib:$LD_LIBRARY_PATH"
@@ -35,4 +39,4 @@ RUN cd lv2 && cargo build --release --target aarch64-unknown-linux-gnu
 
 # Export
 FROM scratch AS moddwarf-export
-COPY --from=moddwarf-build lv2/target/aarch64-unknown-linux-gnu/release/libdm_graindelay.so .
+COPY --from=moddwarf-build "lv2/target/aarch64-unknown-linux-gnu/release/$BINARY_NAME" .

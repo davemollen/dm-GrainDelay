@@ -25,24 +25,24 @@ For Mod Duo, follow the [lv2 instructions](#LV2-installation) first. Then finish
 - Enter Mod password
 - Reboot Mod
 
-## LV2 installation
+## LV2 installation (for Mod)
 
 In order to build the binaries you need to have Docker installed. If so, proceed with the following steps:
 
-- Run `./build-lv2.sh` in the root directory.
-- Copy/paste the binary of the target platform from the `./lv2/out` directory into `./lv2/dm-GrainDelay.lv2`
+- Run `./scripts/build-lv2-for-mod.sh` in the root directory.
+- Copy/paste the binary of the target platform from the `./lv2/out` directory into `./lv2/<plugin name>.lv2`
 
 ## VST installation
 
-First go to the [vst folder](./vst).
-
 Windows:
 
-1. Run `cargo build --release`
-2. Copy libdm_graindelay.dll in /target/release to your vst plugin folder
+1. Run `./scripts/build-vst.sh`
+2. Copy dll file in /target/release to your vst plugin folder
 
-Mac
+Intel Mac:
 
-1. Run `cargo build --release`
-2. Run `./osx_vst_bundler.sh dm-GrainDelay target/release/libdm_graindelay.dylib`
-3. Copy dm-GrainDelay.vst in the root of this folder to your vst plugin folder
+- Run `./scripts/build-vst-for-mac.sh`.
+
+M1 Mac:
+
+- Run `./scripts/build-vst-for-mac-m1.sh`.
