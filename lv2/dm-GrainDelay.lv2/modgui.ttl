@@ -40,8 +40,8 @@
             lv2:name "Feedback" ;
         ] , [
             lv2:index 6 ;
-            lv2:symbol "low_cut" ;
-            lv2:name "Low Cut" ;
+            lv2:symbol "low_pass" ;
+            lv2:name "Low Pass" ;
         ] , [
             lv2:index 7 ;
             lv2:symbol "mix" ;
