@@ -72,7 +72,7 @@ impl GrainDelay {
     rand_pitch: f32,
     delay_time: f32,
     feedback: f32,
-    low_cut: f32,
+    low_pass: f32,
     mix: f32,
   ) -> f32 {
     let time = self.smooth_time.run(delay_time, 3.);
@@ -82,7 +82,7 @@ impl GrainDelay {
     let pitchshift = self.grain_delay(spray, freq, pitch, rand_pitch);
     self
       .delay
-      .write(input + self.lowpass.run(pitchshift * 0.5 * feedback, low_cut));
+      .write(input + self.lowpass.run(pitchshift * 0.5 * feedback, low_pass));
     self.pitchshift.write(delay);
     Mix::run(input, pitchshift, mix)
   }

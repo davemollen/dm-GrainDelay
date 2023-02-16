@@ -50,7 +50,7 @@ impl Plugin for DmGrainDelay {
     let rand_pitch = self.params.rand_pitch.get();
     let delay_time = self.params.delay_time.get();
     let feedback = self.params.feedback.get();
-    let low_cut = self.params.low_cut.get();
+    let low_pass = self.params.low_pass.get();
     let mix = self.params.mix.get();
 
     for (input_buffer, output_buffer) in buffer.zip() {
@@ -63,7 +63,7 @@ impl Plugin for DmGrainDelay {
           rand_pitch,
           delay_time,
           feedback,
-          low_cut,
+          low_pass,
           mix,
         );
       }

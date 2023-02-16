@@ -7,7 +7,7 @@ pub struct GrainDelayParameters {
   pub rand_pitch: AtomicFloat,
   pub delay_time: AtomicFloat,
   pub feedback: AtomicFloat,
-  pub low_cut: AtomicFloat,
+  pub low_pass: AtomicFloat,
   pub mix: AtomicFloat,
 }
 
@@ -20,7 +20,7 @@ impl Default for GrainDelayParameters {
       rand_pitch: AtomicFloat::new(0.),
       delay_time: AtomicFloat::new(0.),
       feedback: AtomicFloat::new(0.),
-      low_cut: AtomicFloat::new(5000.),
+      low_pass: AtomicFloat::new(5000.),
       mix: AtomicFloat::new(0.5),
     }
   }
@@ -35,7 +35,7 @@ impl PluginParameters for GrainDelayParameters {
       3 => self.rand_pitch.get(),
       4 => (self.delay_time.get() / 5000.).powf(0.333333),
       5 => self.feedback.get(),
-      6 => ((self.low_cut.get() - 20.) / 19980.).powf(0.333333),
+      6 => ((self.low_pass.get() - 20.) / 19980.).powf(0.333333),
       7 => self.mix.get(),
       _ => 0.0,
     }
@@ -49,7 +49,7 @@ impl PluginParameters for GrainDelayParameters {
       3 => format!("{:.2}%", self.rand_pitch.get() * 100.0),
       4 => format!("{:.2} ms", self.delay_time.get()),
       5 => format!("{:.2}%", self.feedback.get() * 100.0),
-      6 => format!("{:.2} hz", self.low_cut.get()),
+      6 => format!("{:.2} hz", self.low_pass.get()),
       7 => format!("{:.2}%", self.mix.get() * 100.0),
       _ => "".to_string(),
     }
@@ -78,7 +78,7 @@ impl PluginParameters for GrainDelayParameters {
       3 => self.rand_pitch.set(val),
       4 => self.delay_time.set(val.powf(3.) * 5000.),
       5 => self.feedback.set(val),
-      6 => self.low_cut.set(val.powf(3.) * 19980. + 20.),
+      6 => self.low_pass.set(val.powf(3.) * 19980. + 20.),
       7 => self.mix.set(val),
       _ => (),
     }
