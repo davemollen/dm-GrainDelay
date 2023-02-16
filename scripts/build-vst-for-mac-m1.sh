@@ -14,9 +14,9 @@ file target/release/$BINARY_NAME
 ../scripts/osx_vst_bundler.sh $NAME target/release/$BINARY_NAME 
 
 if [ -d "$MOVE_TO" ]; then
-    rm -r "$MOVE_TO"
+    sudo rm -r "$MOVE_TO"
 fi
 
-if mv "$VST_NAME" "$MOVE_TO"; then
+if sudo mv "$VST_NAME" "$MOVE_TO"; then
     echo "Copied VST bundle to $MOVE_TO"
 fi
