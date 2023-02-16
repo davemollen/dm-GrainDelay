@@ -1,25 +1,35 @@
 @prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
-@prefix epp: <http://lv2plug.in/ns/ext/port-props#> .
+@prefix epp:   <http://lv2plug.in/ns/ext/port-props#> .
+@prefix mod:   <http://moddevices.com/ns/mod#> .
 
 <https://github.com/davemollen/dm-GrainDelay>
-	a lv2:Plugin ,
-		lv2:PitchPlugin ;
+	a lv2:Plugin , lv2:PitchPlugin , mod:DelayPlugin ;
 	lv2:project <http://lv2plug.in/ns/lv2> ;
 	doap:name "dm-GrainDelay" ;
 	doap:license <http://opensource.org/licenses/isc> ;
+	doap:maintainer [
+		foaf:name "Dave Mollen" ;
+		foaf:homepage <https://github.com/davemollen/dm-GrainDelay> ;
+	] ;
+	mod:brand "DM" ;
+	mod:label "Grain Delay" ;
+	rdfs:comment """
+A granular delay effect written in Rust.
+""" ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:port [
 		a lv2:InputPort, lv2:ControlPort ;
 		lv2:index 0 ;
 		lv2:symbol "spray" ;
 		lv2:name "Spray" ;
-		lv2:portProperty epp:logarithmic ;
+		lv2:portProperty epp:logarithmic , mod:tempoRelatedDynamicScalePoints ;
 		lv2:default 2.0 ;
-		lv2:minimum 0.0 ;
+		lv2:minimum 1.0 ;
 		lv2:maximum 500.0 ;
 		units:unit units:ms
 	], [
@@ -27,7 +37,7 @@
 		lv2:index 1 ;
 		lv2:symbol "frequency" ;
 		lv2:name "Frequency" ;
-		lv2:portProperty epp:logarithmic ;
+		lv2:portProperty epp:logarithmic , mod:tempoRelatedDynamicScalePoints ;
 		lv2:default 7.0 ;
 		lv2:minimum 1.0 ;
 		lv2:maximum 150.0 ;
@@ -56,9 +66,9 @@
 		lv2:index 4;
 		lv2:symbol "delay_time" ;
 		lv2:name "Time" ;
-		lv2:portProperty epp:logarithmic ;
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
+		lv2:portProperty epp:logarithmic , mod:tempoRelatedDynamicScalePoints ;
+		lv2:default 1.0 ;
+		lv2:minimum 1.0 ;
 		lv2:maximum 5000.0 ;
 		units:unit units:ms
 	] , [
@@ -73,8 +83,8 @@
 	], [
 		a lv2:InputPort, lv2:ControlPort ;
 		lv2:index 6 ;
-		lv2:symbol "low_cut" ;
-		lv2:name "Low Cut" ;
+		lv2:symbol "low_pass" ;
+		lv2:name "Low Pass" ;
 		lv2:portProperty epp:logarithmic ;
 		lv2:default 5000.0 ;
 		lv2:minimum 20.0 ;
