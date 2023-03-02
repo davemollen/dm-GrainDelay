@@ -1,5 +1,6 @@
-use std::f32;
+use std::f32::consts::PI;
 
+#[derive(Clone)]
 pub struct DelayLine {
   buffer: Vec<f32>,
   write_pointer: usize,
@@ -9,14 +10,14 @@ pub struct DelayLine {
 impl DelayLine {
   pub fn new(length: usize, sample_rate: f32) -> Self {
     Self {
-      buffer: vec![0.0; length],
+      buffer: vec![0.0; length + 1],
       write_pointer: 0,
       sample_rate,
     }
   }
 
   fn mstosamps(&self, time: f32) -> f32 {
-    time * 0.001 * self.sample_rate as f32
+    time * 0.001 * self.sample_rate
   }
 
   fn wrap(&self, index: usize) -> usize {
@@ -39,7 +40,7 @@ impl DelayLine {
   }
 
   fn cosine_interp(&self, index: usize, mix: f32) -> f32 {
-    let cosine_mix = (1. - (mix * f32::consts::PI).cos()) / 2.;
+    let cosine_mix = (1. - (mix * PI).cos()) / 2.;
     let x = self.buffer[self.wrap(index)];
     let y = self.buffer[self.wrap(index + 1)];
     x * (1. - cosine_mix) + y * cosine_mix

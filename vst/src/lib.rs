@@ -7,6 +7,7 @@ use std::sync::Arc;
 use vst::{
   buffer::AudioBuffer,
   plugin::{Category, Info, Plugin, PluginParameters},
+  prelude::HostCallback,
 };
 
 struct DmGrainDelay {
@@ -14,16 +15,14 @@ struct DmGrainDelay {
   grain_delay: GrainDelay,
 }
 
-impl Default for DmGrainDelay {
-  fn default() -> Self {
+impl Plugin for DmGrainDelay {
+  fn new(_: HostCallback) -> Self {
     Self {
       params: Arc::new(GrainDelayParameters::default()),
       grain_delay: GrainDelay::new(44100.),
     }
   }
-}
 
-impl Plugin for DmGrainDelay {
   fn set_sample_rate(&mut self, sample_rate: f32) {
     self.grain_delay = GrainDelay::new(sample_rate);
   }
@@ -35,7 +34,7 @@ impl Plugin for DmGrainDelay {
       version: 1,
       inputs: 1,
       outputs: 1,
-      parameters: 8,
+      parameters: 9,
       unique_id: 1358,
       f64_precision: true,
       category: Category::Effect,
@@ -45,9 +44,10 @@ impl Plugin for DmGrainDelay {
 
   fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
     let spray = self.params.spray.get();
-    let frequency = self.params.frequency.get();
+    let freq = self.params.frequency.get();
     let pitch = self.params.pitch.get();
-    let rand_pitch = self.params.rand_pitch.get();
+    let drift = self.params.drift.get();
+    let reverse = self.params.reverse.get();
     let delay_time = self.params.delay_time.get();
     let feedback = self.params.feedback.get();
     let low_pass = self.params.low_pass.get();
@@ -58,9 +58,10 @@ impl Plugin for DmGrainDelay {
         *output_sample = self.grain_delay.run(
           *input_sample,
           spray,
-          frequency,
+          freq,
           pitch,
-          rand_pitch,
+          drift,
+          reverse,
           delay_time,
           feedback,
           low_pass,
