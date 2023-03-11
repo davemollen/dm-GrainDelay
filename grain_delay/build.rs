@@ -3,9 +3,10 @@ use std::{env, fs, path::Path};
 const MAX_PITCH: f32 = 24.;
 const MAX_DRIFT: f32 = 1.;
 const MIN_FREQUENCY: f32 = 1.;
+const MAX_TIME: f32 = 5.;
 
 fn get_max_grain_delay_time() -> f32 {
-  (1. + 2f32.powf((MAX_PITCH + MAX_DRIFT) / 12.)) * MIN_FREQUENCY
+  (1. + 2f32.powf((MAX_PITCH + MAX_DRIFT) / 12.)) * MIN_FREQUENCY + MAX_TIME
 }
 
 fn main() {

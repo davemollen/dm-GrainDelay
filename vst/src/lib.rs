@@ -48,7 +48,7 @@ impl Plugin for DmGrainDelay {
     let pitch = self.params.pitch.get();
     let drift = self.params.drift.get();
     let reverse = self.params.reverse.get();
-    let delay_time = self.params.delay_time.get();
+    let time = self.params.time.get();
     let feedback = self.params.feedback.get();
     let low_pass = self.params.low_pass.get();
     let mix = self.params.mix.get();
@@ -62,7 +62,7 @@ impl Plugin for DmGrainDelay {
           pitch,
           drift,
           reverse,
-          delay_time,
+          time,
           feedback,
           low_pass,
           mix,

@@ -10,7 +10,7 @@ struct Ports {
   pitch: InputPort<Control>,
   drift: InputPort<Control>,
   reverse: InputPort<Control>,
-  delay_time: InputPort<Control>,
+  time: InputPort<Control>,
   feedback: InputPort<Control>,
   low_pass: InputPort<Control>,
   mix: InputPort<Control>,
@@ -46,14 +46,14 @@ impl Plugin for DmGrainDelay {
     let pitch = *ports.pitch;
     let drift = *ports.drift;
     let reverse = *ports.reverse;
-    let delay_time = *ports.delay_time;
+    let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
     let low_pass = *ports.low_pass;
     let mix = *ports.mix * 0.01;
 
     for (in_frame, out_frame) in ports.input.iter().zip(ports.output.iter_mut()) {
       *out_frame = self.grain_delay.run(
-        *in_frame, spray, freq, pitch, drift, reverse, delay_time, feedback, low_pass, mix,
+        *in_frame, spray, freq, pitch, drift, reverse, time, feedback, low_pass, mix,
       );
     }
   }

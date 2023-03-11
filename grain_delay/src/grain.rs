@@ -33,12 +33,12 @@ impl Grain {
     spray: f32,
     drift: f32,
     reverse: f32,
+    time: f32,
   ) {
     self.freq = freq;
     self.window_size = window_size;
     self.is_reversed = random::<f32>() <= reverse;
-    self.start_position = random::<f32>() * spray;
-    // TODO fix crash on drift change
+    self.start_position = random::<f32>() * spray + time;
     self.drift = random::<f32>() * drift * 2. - drift;
     self.time_ramp.start(None);
     self.window_ramp.start(None);
