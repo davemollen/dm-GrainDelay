@@ -9,6 +9,7 @@ pub struct GrainDelayParameters {
   pub time: AtomicFloat,
   pub feedback: AtomicFloat,
   pub low_pass: AtomicFloat,
+  pub stereo: AtomicFloat,
   pub mix: AtomicFloat,
 }
 
@@ -23,6 +24,7 @@ impl Default for GrainDelayParameters {
       time: AtomicFloat::new(0.),
       feedback: AtomicFloat::new(0.),
       low_pass: AtomicFloat::new(5000.),
+      stereo: AtomicFloat::new(0.),
       mix: AtomicFloat::new(0.5),
     }
   }
@@ -39,22 +41,24 @@ impl PluginParameters for GrainDelayParameters {
       5 => (self.time.get() / 5000.).powf(0.333333),
       6 => self.feedback.get(),
       7 => ((self.low_pass.get() - 20.) / 19980.).powf(0.333333),
-      8 => self.mix.get(),
+      8 => self.stereo.get(),
+      9 => self.mix.get(),
       _ => 0.0,
     }
   }
 
   fn get_parameter_text(&self, index: i32) -> String {
     match index {
-      0 => format!("{:.2} ms", self.spray.get()),
-      1 => format!("{:.2} hz", self.frequency.get()),
-      2 => format!("{:.2} st", self.pitch.get()),
+      0 => format!("{:.2}ms", self.spray.get()),
+      1 => format!("{:.2}hz", self.frequency.get()),
+      2 => format!("{:.2}st", self.pitch.get()),
       3 => format!("{:.2}%", self.drift.get() * 100.0),
       4 => format!("{:.2}%", self.reverse.get() * 100.0),
-      5 => format!("{:.2} ms", self.time.get()),
+      5 => format!("{:.2}ms", self.time.get()),
       6 => format!("{:.2}%", self.feedback.get() * 100.0),
-      7 => format!("{:.2} hz", self.low_pass.get()),
-      8 => format!("{:.2}%", self.mix.get() * 100.0),
+      7 => format!("{:.2}hz", self.low_pass.get()),
+      8 => format!("{:.2}%", self.stereo.get() * 100.0),
+      9 => format!("{:.2}%", self.mix.get() * 100.0),
       _ => "".to_string(),
     }
   }
@@ -69,7 +73,8 @@ impl PluginParameters for GrainDelayParameters {
       5 => "Time",
       6 => "Feedback",
       7 => "Low Cut",
-      8 => "Mix",
+      8 => "Stereo",
+      9 => "Mix",
       _ => "",
     }
     .to_string()
@@ -85,7 +90,8 @@ impl PluginParameters for GrainDelayParameters {
       5 => self.time.set(val.powf(3.) * 5000.),
       6 => self.feedback.set(val),
       7 => self.low_pass.set(val.powf(3.) * 19980. + 20.),
-      8 => self.mix.set(val),
+      8 => self.stereo.set(val),
+      9 => self.mix.set(val),
       _ => (),
     }
   }

@@ -33,8 +33,8 @@ impl Plugin for DmGrainDelay {
       vendor: "DM".to_string(),
       version: 1,
       inputs: 1,
-      outputs: 1,
-      parameters: 9,
+      outputs: 2,
+      parameters: 10,
       unique_id: 1358,
       f64_precision: true,
       category: Category::Effect,
@@ -51,23 +51,21 @@ impl Plugin for DmGrainDelay {
     let time = self.params.time.get();
     let feedback = self.params.feedback.get();
     let low_pass = self.params.low_pass.get();
+    let stereo = self.params.stereo.get();
     let mix = self.params.mix.get();
 
-    for (input_buffer, output_buffer) in buffer.zip() {
-      for (input_sample, output_sample) in input_buffer.iter().zip(output_buffer) {
-        *output_sample = self.grain_delay.run(
-          *input_sample,
-          spray,
-          freq,
-          pitch,
-          drift,
-          reverse,
-          time,
-          feedback,
-          low_pass,
-          mix,
-        );
-      }
+    let (input_channels, mut output_channels) = buffer.split();
+    let input = input_channels.get(0);
+    let zipped_output_channels = output_channels
+      .get_mut(0)
+      .iter_mut()
+      .zip(output_channels.get_mut(1).iter_mut());
+    for (input, (output_left, output_right)) in input.iter().zip(zipped_output_channels) {
+      let (grain_delay_left, grain_delay_right) = self.grain_delay.run(
+        *input, spray, freq, pitch, drift, reverse, time, feedback, low_pass, stereo, mix,
+      );
+      *output_left = grain_delay_left;
+      *output_right = grain_delay_right;
     }
   }
 

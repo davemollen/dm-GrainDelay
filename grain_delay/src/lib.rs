@@ -5,6 +5,7 @@ mod grain;
 mod grain_delay;
 mod lowpass;
 mod mix;
+mod pan;
 mod phasor;
 mod ramp;
 
