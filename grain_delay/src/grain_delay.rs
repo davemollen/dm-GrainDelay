@@ -1,15 +1,17 @@
-use crate::delay_line::DelayLine;
+use crate::delay_line::{DelayLine, Interpolation};
 use crate::delta::Delta;
 use crate::grain::Grain;
 use crate::mix::Mix;
 use crate::one_pole_filter::{Mode, OnePoleFilter};
 use crate::phasor::Phasor;
+use crate::variable_delay_line::VariableDelayLine;
 use crate::MAX_GRAIN_DELAY_TIME;
 use std::f32::consts::FRAC_1_SQRT_2;
 
 const VOICES: usize = 4;
 
 pub struct GrainDelay {
+  variable_delay_line: VariableDelayLine,
   grain_delay_line: DelayLine,
   one_pole_filter: OnePoleFilter,
   phasor: Phasor,
@@ -21,6 +23,7 @@ pub struct GrainDelay {
 impl GrainDelay {
   pub fn new(sample_rate: f32) -> Self {
     Self {
+      variable_delay_line: VariableDelayLine::new((sample_rate * 5.) as usize, sample_rate),
       grain_delay_line: DelayLine::new(
         (sample_rate * MAX_GRAIN_DELAY_TIME).ceil() as usize,
         sample_rate,
@@ -39,7 +42,7 @@ impl GrainDelay {
     spray: f32,
     drift: f32,
     reverse: f32,
-    time: f32,
+    scrub: f32,
     stereo: f32,
   ) {
     let window_size = 1000. / freq;
@@ -48,7 +51,7 @@ impl GrainDelay {
     let index = start.iter().chain(end).position(|grain| grain.is_free());
     match index {
       Some(i) => {
-        self.grains[i].set_parameters(freq, window_size, spray, drift, reverse, time, stereo);
+        self.grains[i].set_parameters(freq, window_size, spray, drift, reverse, scrub, stereo);
         self.index = i;
       }
       None => {}
@@ -62,13 +65,13 @@ impl GrainDelay {
     pitch: f32,
     drift: f32,
     reverse: f32,
-    time: f32,
+    scrub: f32,
     stereo: f32,
   ) -> (f32, f32) {
     let phasor_output = self.phasor.run(freq * VOICES as f32);
     let trigger = self.delta.run(phasor_output) < 0.;
     if trigger {
-      self.set_grain_parameters(freq, spray, drift, reverse, time, stereo);
+      self.set_grain_parameters(freq, spray, drift, reverse, scrub, stereo);
     }
 
     let grain_delay_line = &mut self.grain_delay_line;
@@ -112,15 +115,18 @@ impl GrainDelay {
     pitch: f32,
     drift: f32,
     reverse: f32,
+    scrub: f32,
     time: f32,
     feedback: f32,
     filter: f32,
     stereo: f32,
     mix: f32,
   ) -> (f32, f32) {
-    let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, time, stereo);
+    let delay_out = self.variable_delay_line.read(time, Interpolation::Linear);
+    let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, scrub, stereo);
     let feedback_out = self.apply_feedback(grain_delay_out, pitch, feedback, filter);
-    self.grain_delay_line.write(input + feedback_out);
+    self.variable_delay_line.write(input + feedback_out);
+    self.grain_delay_line.write(delay_out);
     Mix::run(input, grain_delay_out, mix)
   }
 }

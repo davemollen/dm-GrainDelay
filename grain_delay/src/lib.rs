@@ -8,5 +8,6 @@ mod one_pole_filter;
 mod pan;
 mod phasor;
 mod ramp;
+mod variable_delay_line;
 
 pub use self::grain_delay::GrainDelay;

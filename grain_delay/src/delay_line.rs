@@ -1,6 +1,7 @@
 use std::f32::consts::PI;
 
 #[allow(dead_code)]
+#[derive(Clone, Copy)]
 pub enum Interpolation {
   Step,
   Linear,

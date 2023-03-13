@@ -28,13 +28,9 @@ impl Ramp {
     if next_x <= min || next_x >= max {
       self.is_active = false;
     }
-    if next_x >= min && next_x <= max {
-      self.x = Some(next_x);
-      next_x
-    } else {
-      self.x = None;
-      min
-    }
+    let x = next_x.max(min).min(max);
+    self.x = Some(x);
+    x
   }
 
   pub fn start(&mut self, starts_at: Option<f32>) {
@@ -55,7 +51,7 @@ impl Ramp {
         Some(current_x) => self.keep_between_bounds(current_x + step_size, min, max),
       }
     } else {
-      min
+      self.x.unwrap()
     }
   }
 }
