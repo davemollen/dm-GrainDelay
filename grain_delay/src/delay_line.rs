@@ -1,5 +1,14 @@
 use std::f32::consts::PI;
 
+#[allow(dead_code)]
+pub enum Interpolation {
+  Step,
+  Linear,
+  Cosine,
+  Cubic,
+  Spline,
+}
+
 #[derive(Clone)]
 pub struct DelayLine {
   buffer: Vec<f32>,
@@ -77,19 +86,18 @@ impl DelayLine {
     ((c3 * mix + c2) * mix + c1) * mix + c0
   }
 
-  pub fn read(&mut self, time: f32, interp: &str) -> f32 {
+  pub fn read(&mut self, time: f32, interp: Interpolation) -> f32 {
     let read_pointer = (self.write_pointer - 1 + self.buffer.len()) as f32 - self.mstosamps(time);
     let rounded_read_pointer = read_pointer.trunc();
     let mix = read_pointer - rounded_read_pointer;
     let index = rounded_read_pointer as usize;
 
     match interp {
-      "step" => self.step_interp(index),
-      "linear" => self.linear_interp(index, mix),
-      "cosine" => self.cosine_interp(index, mix),
-      "cubic" => self.cubic_interp(index - 1, mix),
-      "spline" => self.spline_interp(index - 1, mix),
-      _ => self.step_interp(index),
+      Interpolation::Step => self.step_interp(index),
+      Interpolation::Linear => self.linear_interp(index, mix),
+      Interpolation::Cosine => self.cosine_interp(index, mix),
+      Interpolation::Cubic => self.cubic_interp(index - 1, mix),
+      Interpolation::Spline => self.spline_interp(index - 1, mix),
     }
   }
 

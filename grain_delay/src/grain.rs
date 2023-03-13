@@ -1,4 +1,8 @@
-use crate::{delay_line::DelayLine, pan::Pan, ramp::Ramp};
+use crate::{
+  delay_line::{DelayLine, Interpolation},
+  pan::Pan,
+  ramp::Ramp,
+};
 use rand::random;
 use std::f32::consts::PI;
 
@@ -17,11 +21,11 @@ pub struct Grain {
 impl Grain {
   pub fn new(sample_rate: f32) -> Self {
     Self {
-      freq: 7.,
+      freq: 0.,
       drift: 0.,
       start_position: 0.,
       pan: 0.,
-      window_size: 1000.,
+      window_size: 0.,
       time_ramp: Ramp::new(sample_rate),
       window_ramp: Ramp::new(sample_rate),
       is_reversed: false,
@@ -59,9 +63,13 @@ impl Grain {
     } else {
       (1. - speed) * self.freq
     };
-    let time = self.time_ramp.run(ramp_freq, false) * self.window_size;
-    let grain_delay_line_out = grain_delay_line.read(time + self.start_position, "linear");
-    let windowing = ((self.window_ramp.run(self.freq, true) - 0.5) * PI).cos();
+    let time = self
+      .time_ramp
+      .run(ramp_freq, 0., (ramp_freq / self.freq).abs())
+      * self.window_size;
+    let grain_delay_line_out =
+      grain_delay_line.read(time + self.start_position, Interpolation::Linear);
+    let windowing = ((self.window_ramp.run(self.freq, 0., 1.) - 0.5) * PI).cos();
     let windowed_grain_delay_out = grain_delay_line_out * windowing * windowing;
     windowed_grain_delay_out.pan(self.pan)
   }

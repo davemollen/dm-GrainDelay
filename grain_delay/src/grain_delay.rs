@@ -1,18 +1,17 @@
-use std::f32::consts::FRAC_1_SQRT_2;
-
 use crate::delay_line::DelayLine;
 use crate::delta::Delta;
 use crate::grain::Grain;
-use crate::lowpass::Lowpass;
 use crate::mix::Mix;
+use crate::one_pole_filter::{Mode, OnePoleFilter};
 use crate::phasor::Phasor;
 use crate::MAX_GRAIN_DELAY_TIME;
+use std::f32::consts::FRAC_1_SQRT_2;
 
 const VOICES: usize = 4;
 
 pub struct GrainDelay {
   grain_delay_line: DelayLine,
-  lowpass: Lowpass,
+  one_pole_filter: OnePoleFilter,
   phasor: Phasor,
   delta: Delta,
   grains: Vec<Grain>,
@@ -22,12 +21,37 @@ pub struct GrainDelay {
 impl GrainDelay {
   pub fn new(sample_rate: f32) -> Self {
     Self {
-      grain_delay_line: DelayLine::new((sample_rate * MAX_GRAIN_DELAY_TIME) as usize, sample_rate),
-      lowpass: Lowpass::new(sample_rate),
+      grain_delay_line: DelayLine::new(
+        (sample_rate * MAX_GRAIN_DELAY_TIME).ceil() as usize,
+        sample_rate,
+      ),
+      one_pole_filter: OnePoleFilter::new(sample_rate),
       phasor: Phasor::new(sample_rate),
       delta: Delta::new(),
-      grains: vec![Grain::new(sample_rate); VOICES * 2],
+      grains: vec![Grain::new(sample_rate); VOICES],
       index: 0,
+    }
+  }
+
+  fn set_grain_parameters(
+    &mut self,
+    freq: f32,
+    spray: f32,
+    drift: f32,
+    reverse: f32,
+    time: f32,
+    stereo: f32,
+  ) {
+    let window_size = 1000. / freq;
+
+    let (start, end) = self.grains.split_at(self.index);
+    let index = start.iter().chain(end).position(|grain| grain.is_free());
+    match index {
+      Some(i) => {
+        self.grains[i].set_parameters(freq, window_size, spray, drift, reverse, time, stereo);
+        self.index = i;
+      }
+      None => {}
     }
   }
 
@@ -41,30 +65,15 @@ impl GrainDelay {
     time: f32,
     stereo: f32,
   ) -> (f32, f32) {
-    let Self {
-      grains,
-      grain_delay_line,
-      ..
-    } = self;
-
     let phasor_output = self.phasor.run(freq * VOICES as f32);
     let trigger = self.delta.run(phasor_output) < 0.;
-
     if trigger {
-      let window_size = 1000. / freq;
-
-      let (start, end) = grains.split_at(self.index);
-      let index = start.iter().chain(end).position(|grain| grain.is_free());
-      match index {
-        Some(i) => {
-          grains[i].set_parameters(freq, window_size, spray, drift, reverse, time, stereo);
-          self.index = i;
-        }
-        None => {}
-      }
+      self.set_grain_parameters(freq, spray, drift, reverse, time, stereo);
     }
 
-    grains
+    let grain_delay_line = &mut self.grain_delay_line;
+    self
+      .grains
       .iter_mut()
       .filter(|grain| !grain.is_free())
       .map(|grain| grain.run(grain_delay_line, pitch))
@@ -73,10 +82,28 @@ impl GrainDelay {
       })
   }
 
-  // TODO: turn filter into highpass filter when pitch is below zero
-  // TODO: check parameter mapping in lv2
-  // TODO: update gui to 10 parameters
-  // TODO: safe processing power
+  fn apply_feedback(&mut self, input: (f32, f32), pitch: f32, feedback: f32, filter: f32) -> f32 {
+    let mono_input = (input.0 + input.1) * FRAC_1_SQRT_2;
+    let filter_input = mono_input * 0.5 * feedback;
+    let filter_enabled = feedback > 0. && filter > 0.;
+
+    if filter_enabled {
+      let is_low_pass_filter = pitch > 0.;
+      if is_low_pass_filter {
+        self
+          .one_pole_filter
+          .run(filter_input, filter.powf(0.33333), Mode::Linear)
+      } else {
+        filter_input
+          - self
+            .one_pole_filter
+            .run(filter_input, 1. - filter.powf(3.), Mode::Linear)
+      }
+    } else {
+      filter_input
+    }
+  }
+
   pub fn run(
     &mut self,
     input: f32,
@@ -87,18 +114,13 @@ impl GrainDelay {
     reverse: f32,
     time: f32,
     feedback: f32,
-    low_pass: f32,
+    filter: f32,
     stereo: f32,
     mix: f32,
   ) -> (f32, f32) {
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, time, stereo);
-    let grain_delay_out_mono = (grain_delay_out.0 + grain_delay_out.1) * FRAC_1_SQRT_2;
-    self.grain_delay_line.write(
-      input
-        + self
-          .lowpass
-          .run(grain_delay_out_mono * 0.5 * feedback, low_pass),
-    );
+    let feedback_out = self.apply_feedback(grain_delay_out, pitch, feedback, filter);
+    self.grain_delay_line.write(input + feedback_out);
     Mix::run(input, grain_delay_out, mix)
   }
 }

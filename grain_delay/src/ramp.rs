@@ -14,8 +14,8 @@ impl Ramp {
     }
   }
 
-  fn initialize(&mut self, step_size: f32) -> f32 {
-    let x = if step_size > 0. { 0. } else { 1. };
+  fn initialize(&mut self, step_size: f32, min: f32, max: f32) -> f32 {
+    let x = if step_size > 0. { min } else { max };
     self.x = Some(x);
     x
   }
@@ -24,16 +24,16 @@ impl Ramp {
     1. / self.sample_rate * freq
   }
 
-  fn keep_between_bounds(&mut self, next_x: f32) -> f32 {
-    if next_x <= 0. || next_x >= 1. {
+  fn keep_between_bounds(&mut self, next_x: f32, min: f32, max: f32) -> f32 {
+    if next_x <= min || next_x >= max {
       self.is_active = false;
     }
-    if next_x >= 0. && next_x <= 1. {
+    if next_x >= min && next_x <= max {
       self.x = Some(next_x);
       next_x
     } else {
       self.x = None;
-      0.
+      min
     }
   }
 
@@ -46,24 +46,16 @@ impl Ramp {
     !self.is_active
   }
 
-  pub fn run(&mut self, freq: f32, has_bounds: bool) -> f32 {
+  pub fn run(&mut self, freq: f32, min: f32, max: f32) -> f32 {
     if self.is_active {
       let step_size = self.get_step_size(freq);
 
       match self.x {
-        None => self.initialize(step_size),
-        Some(current_x) => {
-          let next_x = current_x + step_size;
-          if has_bounds {
-            self.keep_between_bounds(next_x)
-          } else {
-            self.x = Some(next_x);
-            next_x
-          }
-        }
+        None => self.initialize(step_size, min, max),
+        Some(current_x) => self.keep_between_bounds(current_x + step_size, min, max),
       }
     } else {
-      0.
+      min
     }
   }
 }
@@ -83,18 +75,18 @@ mod tests {
   fn forward_ramp() {
     let mut ramp = Ramp::new(10.);
     ramp.start(None);
-    assert_approximately_eq(ramp.run(1., true), 0.);
-    assert_approximately_eq(ramp.run(1., true), 0.1);
-    assert_approximately_eq(ramp.run(1., true), 0.2);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.1);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.2);
   }
 
   #[test]
   fn backwards_ramp() {
     let mut ramp = Ramp::new(10.);
     ramp.start(None);
-    assert_approximately_eq(ramp.run(-1., true), 1.);
-    assert_approximately_eq(ramp.run(-1., true), 0.9);
-    assert_approximately_eq(ramp.run(-1., true), 0.8);
+    assert_approximately_eq(ramp.run(-1., 0., 1.), 1.);
+    assert_approximately_eq(ramp.run(-1., 0., 1.), 0.9);
+    assert_approximately_eq(ramp.run(-1., 0., 1.), 0.8);
   }
 
   #[test]
@@ -102,10 +94,10 @@ mod tests {
     let mut ramp = Ramp::new(10.);
     ramp.start(Some(0.5));
     assert_approximately_eq(ramp.x.unwrap(), 0.5);
-    assert_approximately_eq(ramp.run(1., true), 0.6);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.6);
     ramp.start(Some(0.6));
     assert_approximately_eq(ramp.x.unwrap(), 0.6);
-    assert_approximately_eq(ramp.run(1., true), 0.7);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.7);
   }
 
   #[test]
@@ -114,17 +106,33 @@ mod tests {
     ramp.start(None);
     assert!(ramp.is_active);
     assert!(!ramp.is_finished());
-    assert_approximately_eq(ramp.run(1., true), 0.);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.);
     assert!(ramp.is_active);
-    assert_approximately_eq(ramp.run(1., true), 0.2);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.2);
     assert!(ramp.is_active);
-    assert_approximately_eq(ramp.run(1., true), 0.4);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.4);
     assert!(ramp.is_active);
-    assert_approximately_eq(ramp.run(1., true), 0.6);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.6);
     assert!(ramp.is_active);
-    assert_approximately_eq(ramp.run(1., true), 0.8);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 0.8);
     assert!(ramp.is_active);
-    assert_approximately_eq(ramp.run(1., true), 1.);
+    assert_approximately_eq(ramp.run(1., 0., 1.), 1.);
+    assert!(ramp.is_active == false);
+    assert!(ramp.is_finished())
+  }
+
+  #[test]
+  fn stays_between_bounds() {
+    let mut ramp = Ramp::new(10.);
+    ramp.start(Some(1.));
+    assert_approximately_eq(ramp.run(1., 0., 1.2), 1.1);
+    assert_approximately_eq(ramp.run(1., 0., 1.2), 1.2);
+    assert!(ramp.is_active == false);
+    assert!(ramp.is_finished());
+
+    ramp.start(Some(0.));
+    assert_approximately_eq(ramp.run(-1., -0.2, 1.), -0.1);
+    assert_approximately_eq(ramp.run(-1., -0.2, 1.), -0.2);
     assert!(ramp.is_active == false);
     assert!(ramp.is_finished())
   }
