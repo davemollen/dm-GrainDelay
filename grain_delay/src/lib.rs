@@ -1,4 +1,5 @@
 include!(concat!(env!("OUT_DIR"), "/constants.rs"));
+mod dc_block;
 mod delay_line;
 mod delta;
 mod grain;

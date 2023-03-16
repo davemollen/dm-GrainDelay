@@ -1,3 +1,4 @@
+use crate::dc_block::DcBlock;
 use crate::delay_line::{DelayLine, Interpolation};
 use crate::delta::Delta;
 use crate::grain::Grain;
@@ -18,6 +19,7 @@ pub struct GrainDelay {
   delta: Delta,
   grains: Vec<Grain>,
   index: usize,
+  dc_block: DcBlock,
 }
 
 impl GrainDelay {
@@ -33,6 +35,7 @@ impl GrainDelay {
       delta: Delta::new(),
       grains: vec![Grain::new(sample_rate); VOICES],
       index: 0,
+      dc_block: DcBlock::new(sample_rate),
     }
   }
 
@@ -40,6 +43,7 @@ impl GrainDelay {
     &mut self,
     freq: f32,
     spray: f32,
+    pitch: f32,
     drift: f32,
     reverse: f32,
     scrub: f32,
@@ -51,7 +55,16 @@ impl GrainDelay {
     let index = start.iter().chain(end).position(|grain| grain.is_free());
     match index {
       Some(i) => {
-        self.grains[i].set_parameters(freq, window_size, spray, drift, reverse, scrub, stereo);
+        self.grains[i].set_parameters(
+          freq,
+          window_size,
+          spray,
+          pitch,
+          drift,
+          reverse,
+          scrub,
+          stereo,
+        );
         self.index = i;
       }
       None => {}
@@ -71,7 +84,7 @@ impl GrainDelay {
     let phasor_output = self.phasor.run(freq * VOICES as f32);
     let trigger = self.delta.run(phasor_output) < 0.;
     if trigger {
-      self.set_grain_parameters(freq, spray, drift, reverse, scrub, stereo);
+      self.set_grain_parameters(freq, spray, pitch, drift, reverse, scrub, stereo);
     }
 
     let grain_delay_line = &mut self.grain_delay_line;
@@ -90,7 +103,7 @@ impl GrainDelay {
     let filter_input = mono_input * 0.5 * feedback;
     let filter_enabled = feedback > 0. && filter > 0.;
 
-    if filter_enabled {
+    let filter_out = if filter_enabled {
       let is_low_pass_filter = pitch > 0.;
       if is_low_pass_filter {
         self
@@ -104,7 +117,8 @@ impl GrainDelay {
       }
     } else {
       filter_input
-    }
+    };
+    self.dc_block.run(filter_out.clamp(-1., 1.))
   }
 
   pub fn run(
