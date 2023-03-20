@@ -5,14 +5,15 @@ use crate::grain::Grain;
 use crate::mix::Mix;
 use crate::one_pole_filter::{Mode, OnePoleFilter};
 use crate::phasor::Phasor;
-use crate::variable_delay_line::VariableDelayLine;
+use crate::variable_delay::VariableDelay;
 use crate::MAX_GRAIN_DELAY_TIME;
 use std::f32::consts::FRAC_1_SQRT_2;
 
 const VOICES: usize = 4;
 
 pub struct GrainDelay {
-  variable_delay_line: VariableDelayLine,
+  delay_line: DelayLine,
+  variable_delay: VariableDelay,
   grain_delay_line: DelayLine,
   one_pole_filter: OnePoleFilter,
   phasor: Phasor,
@@ -25,7 +26,8 @@ pub struct GrainDelay {
 impl GrainDelay {
   pub fn new(sample_rate: f32) -> Self {
     Self {
-      variable_delay_line: VariableDelayLine::new((sample_rate * 5.) as usize, sample_rate),
+      delay_line: DelayLine::new((sample_rate * 5.) as usize, sample_rate),
+      variable_delay: VariableDelay::new(sample_rate),
       grain_delay_line: DelayLine::new(
         (sample_rate * MAX_GRAIN_DELAY_TIME).ceil() as usize,
         sample_rate,
@@ -136,10 +138,12 @@ impl GrainDelay {
     stereo: f32,
     mix: f32,
   ) -> (f32, f32) {
-    let delay_out = self.variable_delay_line.read(time, Interpolation::Linear);
+    let delay_out = self
+      .variable_delay
+      .read(&mut self.delay_line, time, Interpolation::Linear);
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, scrub, stereo);
     let feedback_out = self.apply_feedback(grain_delay_out, pitch, feedback, filter);
-    self.variable_delay_line.write(input + feedback_out);
+    self.delay_line.write(input + feedback_out);
     self.grain_delay_line.write(delay_out);
     Mix::run(input, grain_delay_out, mix)
   }
