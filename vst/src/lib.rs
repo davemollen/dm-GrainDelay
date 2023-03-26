@@ -52,7 +52,7 @@ impl Plugin for DmGrainDelay {
     let time = self.params.time.get();
     let feedback = self.params.feedback.get();
     let filter = self.params.filter.get();
-    let stereo = self.params.stereo.get();
+    let spread = self.params.spread.get();
     let mix = self.params.mix.get();
 
     let (input_channels, mut output_channels) = buffer.split();
@@ -63,7 +63,7 @@ impl Plugin for DmGrainDelay {
       .zip(output_channels.get_mut(1).iter_mut());
     for (input, (output_left, output_right)) in input.iter().zip(zipped_output_channels) {
       let (grain_delay_left, grain_delay_right) = self.grain_delay.run(
-        *input, spray, freq, pitch, drift, reverse, scrub, time, feedback, filter, stereo, mix,
+        *input, spray, freq, pitch, drift, reverse, scrub, time, feedback, filter, spread, mix,
       );
       *output_left = grain_delay_left;
       *output_right = grain_delay_right;

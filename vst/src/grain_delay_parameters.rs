@@ -10,7 +10,7 @@ pub struct GrainDelayParameters {
   pub time: AtomicFloat,
   pub feedback: AtomicFloat,
   pub filter: AtomicFloat,
-  pub stereo: AtomicFloat,
+  pub spread: AtomicFloat,
   pub mix: AtomicFloat,
 }
 
@@ -26,7 +26,7 @@ impl Default for GrainDelayParameters {
       time: AtomicFloat::new(0.),
       feedback: AtomicFloat::new(0.),
       filter: AtomicFloat::new(0.),
-      stereo: AtomicFloat::new(0.),
+      spread: AtomicFloat::new(0.),
       mix: AtomicFloat::new(0.5),
     }
   }
@@ -44,7 +44,7 @@ impl PluginParameters for GrainDelayParameters {
       6 => (self.time.get() / 5000.).powf(0.333333),
       7 => self.feedback.get(),
       8 => self.filter.get(),
-      9 => self.stereo.get(),
+      9 => self.spread.get(),
       10 => self.mix.get(),
       _ => 0.0,
     }
@@ -61,7 +61,7 @@ impl PluginParameters for GrainDelayParameters {
       6 => format!("{:.2}ms", self.time.get()),
       7 => format!("{:.2}%", self.feedback.get() * 100.0),
       8 => format!("{:.2}%", self.filter.get() * 100.0),
-      9 => format!("{:.2}%", self.stereo.get() * 100.0),
+      9 => format!("{:.2}%", self.spread.get() * 100.0),
       10 => format!("{:.2}%", self.mix.get() * 100.0),
       _ => "".to_string(),
     }
@@ -78,7 +78,7 @@ impl PluginParameters for GrainDelayParameters {
       6 => "Time",
       7 => "Feedback",
       8 => "Filter",
-      9 => "Stereo",
+      9 => "Spread",
       10 => "Mix",
       _ => "",
     }
@@ -96,7 +96,7 @@ impl PluginParameters for GrainDelayParameters {
       6 => self.time.set(val.powf(3.) * 5000.),
       7 => self.feedback.set(val),
       8 => self.filter.set(val),
-      9 => self.stereo.set(val),
+      9 => self.spread.set(val),
       10 => self.mix.set(val),
       _ => (),
     }

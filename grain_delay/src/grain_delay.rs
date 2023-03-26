@@ -49,7 +49,7 @@ impl GrainDelay {
     drift: f32,
     reverse: f32,
     scrub: f32,
-    stereo: f32,
+    spread: f32,
   ) {
     let window_size = 1000. / freq;
 
@@ -65,7 +65,7 @@ impl GrainDelay {
           drift,
           reverse,
           scrub,
-          stereo,
+          spread,
         );
         self.index = i;
       }
@@ -81,12 +81,12 @@ impl GrainDelay {
     drift: f32,
     reverse: f32,
     scrub: f32,
-    stereo: f32,
+    spread: f32,
   ) -> (f32, f32) {
     let phasor_output = self.phasor.run(freq * VOICES as f32);
     let trigger = self.delta.run(phasor_output) < 0.;
     if trigger {
-      self.set_grain_parameters(freq, spray, pitch, drift, reverse, scrub, stereo);
+      self.set_grain_parameters(freq, spray, pitch, drift, reverse, scrub, spread);
     }
 
     let grain_delay_line = &mut self.grain_delay_line;
@@ -135,13 +135,13 @@ impl GrainDelay {
     time: f32,
     feedback: f32,
     filter: f32,
-    stereo: f32,
+    spread: f32,
     mix: f32,
   ) -> (f32, f32) {
     let delay_out = self
       .variable_delay
       .read(&mut self.delay_line, time, Interpolation::Linear);
-    let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, scrub, stereo);
+    let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, scrub, spread);
     let feedback_out = self.apply_feedback(grain_delay_out, pitch, feedback, filter);
     self.delay_line.write(input + feedback_out);
     self.grain_delay_line.write(delay_out);

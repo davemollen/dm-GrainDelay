@@ -86,6 +86,6 @@ impl Grain {
   }
 
   fn get_window(&mut self) -> f32 {
-    ((self.time_ramp.get_progress() - 0.5) * PI).cos()
+    (self.time_ramp.get_progress() * PI).sin()
   }
 }
