@@ -47,7 +47,6 @@ A granular delay effect written in Rust.
 		lv2:index 2 ;
 		lv2:symbol "pitch" ;
 		lv2:name "Pitch" ;
-		lv2:portProperty lv2:integer ;
 		lv2:default 12.0 ;
 		lv2:minimum -24.0 ;
 		lv2:maximum 24.0 ;
@@ -92,16 +91,24 @@ A granular delay effect written in Rust.
 	], [
 		a lv2:InputPort, lv2:ControlPort ;
 		lv2:index 7 ;
-		lv2:symbol "low_pass" ;
-		lv2:name "Low Pass" ;
-		lv2:portProperty epp:logarithmic ;
-		lv2:default 5000.0 ;
-		lv2:minimum 20.0 ;
-		lv2:maximum 20000.0 ;
-		units:unit units:hz
+		lv2:symbol "filter" ;
+		lv2:name "Filter" ;
+		lv2:default 0.0 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 100.0 ;
+		units:unit units:pc
 	], [
 		a lv2:InputPort, lv2:ControlPort ;
 		lv2:index 8 ;
+		lv2:symbol "spread" ;
+		lv2:name "Spread" ;
+		lv2:default 0.0 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 100.0 ;
+		units:unit units:pc
+	], [
+		a lv2:InputPort, lv2:ControlPort ;
+		lv2:index 9 ;
 		lv2:symbol "mix" ;
 		lv2:name "Mix" ;
 		lv2:default 50.0 ;
@@ -110,12 +117,12 @@ A granular delay effect written in Rust.
 		units:unit units:pc
 	], [
 		a lv2:AudioPort, lv2:InputPort ;
-		lv2:index 9 ;
+		lv2:index 10 ;
 		lv2:symbol "in" ;
 		lv2:name "In"
 	] , [
 		a lv2:AudioPort, lv2:OutputPort ;
-		lv2:index 10 ;
+		lv2:index 11 ;
 		lv2:symbol "out" ;
 		lv2:name "Out"
 	] .

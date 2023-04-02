@@ -44,13 +44,12 @@ impl Grain {
     pitch: f32,
     drift: f32,
     reverse: f32,
-    scrub: f32,
     pan: f32,
   ) {
     self.freq = freq;
     self.window_size = window_size;
     self.is_reversed = random::<f32>() <= reverse;
-    self.start_position = random::<f32>() * spray + scrub * 5000.;
+    self.start_position = random::<f32>() * spray;
     self.pan = (random::<f32>() * pan * 2. - pan) * 50.;
     self.drift = random::<f32>() * drift * 2. - drift;
     self.time_ramp.start(None);
