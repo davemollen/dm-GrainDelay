@@ -20,7 +20,7 @@ pub struct DelayLine {
 impl DelayLine {
   pub fn new(length: usize, sample_rate: f32) -> Self {
     Self {
-      buffer: vec![0.0; length + 1],
+      buffer: vec![0.0; length],
       write_pointer: 0,
       sample_rate,
     }
