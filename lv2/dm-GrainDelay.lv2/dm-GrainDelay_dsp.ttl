@@ -1,4 +1,4 @@
-@prefix doap:  <http://usefulinc.com/ns/doap#> .
+ @prefix doap:  <http://usefulinc.com/ns/doap#> .
 @prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -123,6 +123,11 @@ A granular delay effect written in Rust.
 	] , [
 		a lv2:AudioPort, lv2:OutputPort ;
 		lv2:index 11 ;
-		lv2:symbol "out" ;
-		lv2:name "Out"
+		lv2:symbol "out_left" ;
+		lv2:name "Out left"
+	] , [
+		a lv2:AudioPort, lv2:OutputPort ;
+		lv2:index 12 ;
+		lv2:symbol "out_right" ;
+		lv2:name "Out right"
 	] .
