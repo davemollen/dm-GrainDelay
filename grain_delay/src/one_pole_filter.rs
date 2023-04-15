@@ -29,7 +29,7 @@ impl OnePoleFilter {
     a * (1. - interp) + b * interp
   }
 
-  pub fn run(&mut self, input: f32, cutoff_freq: f32, mode: Mode) -> f32 {
+  fn apply_filter(&mut self, input: f32, cutoff_freq: f32, mode: Mode) -> f32 {
     let coefficient = match mode {
       Mode::Linear => self.convert_linear_input_to_coefficient(cutoff_freq),
       Mode::Hertz => self.convert_hertz_to_coefficient(cutoff_freq),
@@ -37,5 +37,13 @@ impl OnePoleFilter {
     let output = self.mix(self.z, input, coefficient);
     self.z = output;
     output
+  }
+
+  pub fn run(&mut self, input: f32, cutoff_freq: f32, mode: Mode) -> f32 {
+    if (input - self.z).abs().is_subnormal() {
+      input
+    } else {
+      self.apply_filter(input, cutoff_freq, mode)
+    }
   }
 }

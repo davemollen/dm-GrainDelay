@@ -21,6 +21,9 @@ pub struct GrainDelay {
   grains: Vec<Grain>,
   index: usize,
   dc_block: DcBlock,
+  smooth_filter: OnePoleFilter,
+  smooth_feedback: OnePoleFilter,
+  smooth_mix: OnePoleFilter,
 }
 
 impl GrainDelay {
@@ -38,6 +41,9 @@ impl GrainDelay {
       grains: vec![Grain::new(sample_rate); VOICES],
       index: 0,
       dc_block: DcBlock::new(sample_rate),
+      smooth_filter: OnePoleFilter::new(sample_rate),
+      smooth_feedback: OnePoleFilter::new(sample_rate),
+      smooth_mix: OnePoleFilter::new(sample_rate),
     }
   }
 
@@ -126,6 +132,10 @@ impl GrainDelay {
     spread: f32,
     mix: f32,
   ) -> (f32, f32) {
+    let filter = self.smooth_filter.run(filter, 12., Mode::Hertz);
+    let feedback = self.smooth_feedback.run(feedback, 12., Mode::Hertz);
+    let mix = self.smooth_mix.run(mix, 12., Mode::Hertz);
+
     let delay_out = self
       .variable_delay
       .read(&mut self.delay_line, time, Interpolation::Linear);
