@@ -12,10 +12,12 @@ struct Ports {
   reverse: InputPort<Control>,
   time: InputPort<Control>,
   feedback: InputPort<Control>,
-  low_pass: InputPort<Control>,
+  filter: InputPort<Control>,
+  spread: InputPort<Control>,
   mix: InputPort<Control>,
   input: InputPort<Audio>,
-  output: OutputPort<Audio>,
+  output_left: OutputPort<Audio>,
+  output_right: OutputPort<Audio>,
 }
 
 #[uri("https://github.com/davemollen/dm-GrainDelay")]
@@ -44,17 +46,24 @@ impl Plugin for DmGrainDelay {
     let spray = *ports.spray;
     let freq = *ports.frequency;
     let pitch = *ports.pitch;
-    let drift = *ports.drift;
-    let reverse = *ports.reverse;
+    let drift = *ports.drift * 0.01;
+    let reverse = *ports.reverse * 0.01;
     let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
-    let low_pass = *ports.low_pass;
+    let filter = *ports.filter * 0.01;
+    let spread = *ports.spread * 0.01;
     let mix = *ports.mix * 0.01;
 
-    for (in_frame, out_frame) in ports.input.iter().zip(ports.output.iter_mut()) {
-      *out_frame = self.grain_delay.run(
-        *in_frame, spray, freq, pitch, drift, reverse, time, feedback, low_pass, mix,
+    let output_channels = ports
+      .output_left
+      .iter_mut()
+      .zip(ports.output_right.iter_mut());
+    for (input, (out_left, out_right)) in ports.input.iter().zip(output_channels) {
+      let (grain_delay_left, grain_delay_right) = self.grain_delay.run(
+        *input, spray, freq, pitch, drift, reverse, time, feedback, filter, spread, mix,
       );
+      *out_left = grain_delay_left;
+      *out_right = grain_delay_right;
     }
   }
 }
