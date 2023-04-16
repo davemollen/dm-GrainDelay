@@ -42,7 +42,7 @@ impl Plugin for DmGrainDelay {
 
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
-  fn run(&mut self, ports: &mut Ports, _features: &mut ()) {
+  fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
     let spray = *ports.spray;
     let freq = *ports.frequency;
     let pitch = *ports.pitch;
