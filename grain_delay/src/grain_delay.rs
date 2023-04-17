@@ -4,6 +4,7 @@ use crate::delta::Delta;
 use crate::grain::Grain;
 use crate::mix::Mix;
 use crate::one_pole_filter::{Mode, OnePoleFilter};
+use crate::one_pole_filter_stereo::{Mode as StereoMode, OnePoleFilterStereo};
 use crate::phasor::Phasor;
 use crate::variable_delay::VariableDelay;
 use crate::MAX_GRAIN_DELAY_TIME;
@@ -15,7 +16,7 @@ pub struct GrainDelay {
   delay_line: DelayLine,
   variable_delay: VariableDelay,
   grain_delay_line: DelayLine,
-  one_pole_filter: OnePoleFilter,
+  one_pole_filter: OnePoleFilterStereo,
   phasor: Phasor,
   delta: Delta,
   grains: Vec<Grain>,
@@ -35,7 +36,7 @@ impl GrainDelay {
         (sample_rate * MAX_GRAIN_DELAY_TIME).ceil() as usize,
         sample_rate,
       ),
-      one_pole_filter: OnePoleFilter::new(sample_rate),
+      one_pole_filter: OnePoleFilterStereo::new(sample_rate),
       phasor: Phasor::new(sample_rate),
       delta: Delta::new(),
       grains: vec![Grain::new(sample_rate); VOICES * 2],
@@ -95,27 +96,28 @@ impl GrainDelay {
       })
   }
 
-  fn apply_feedback(&mut self, input: (f32, f32), pitch: f32, feedback: f32, filter: f32) -> f32 {
-    let mono_input = (input.0 + input.1) * FRAC_1_SQRT_2;
-    let filter_input = mono_input * 0.5 * feedback;
-    let filter_enabled = feedback > 0. && filter > 0.;
-
-    let filter_out = if filter_enabled {
+  fn apply_filter(&mut self, input: (f32, f32), pitch: f32, filter: f32) -> (f32, f32) {
+    if filter > 0. {
       let is_low_pass_filter = pitch > 0.;
       if is_low_pass_filter {
         self
           .one_pole_filter
-          .run(filter_input, filter.powf(0.33333), Mode::Linear)
+          .run(input, filter.powf(0.33333), StereoMode::Linear)
       } else {
-        filter_input
-          - self
-            .one_pole_filter
-            .run(filter_input, 1. - filter.powf(3.), Mode::Linear)
+        let filter_out = self
+          .one_pole_filter
+          .run(input, 1. - filter.powf(3.), StereoMode::Linear);
+        (filter_out.0 - input.0, filter_out.1 - input.1)
       }
     } else {
-      filter_input
-    };
-    self.dc_block.run(filter_out.clamp(-1., 1.))
+      input
+    }
+  }
+
+  fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {
+    let mono_input = (input.0 + input.1) * FRAC_1_SQRT_2;
+    let feedback_out = mono_input * 0.5 * feedback;
+    self.dc_block.run(feedback_out.clamp(-1., 1.))
   }
 
   pub fn run(
@@ -140,9 +142,11 @@ impl GrainDelay {
       .variable_delay
       .read(&mut self.delay_line, time, Interpolation::Linear);
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, spread);
-    let feedback_out = self.apply_feedback(grain_delay_out, pitch, feedback, filter);
+    let filter_out = self.apply_filter(grain_delay_out, pitch, filter);
+    let feedback_out = self.apply_feedback(filter_out, feedback);
+
     self.delay_line.write(input + feedback_out);
     self.grain_delay_line.write(delay_out);
-    Mix::run(input, grain_delay_out, mix)
+    Mix::run(input, filter_out, mix)
   }
 }
