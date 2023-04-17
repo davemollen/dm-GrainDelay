@@ -16,16 +16,16 @@ impl OnePoleFilter {
     Self { sample_rate, z: 0. }
   }
 
-  fn convert_linear_input_to_coefficient(&mut self, r: f32) -> f32 {
+  fn convert_linear_input_to_coefficient(&self, r: f32) -> f32 {
     (1. - r) / 44100. * self.sample_rate
   }
 
-  fn convert_hertz_to_coefficient(&mut self, freq: f32) -> f32 {
+  fn convert_hertz_to_coefficient(&self, freq: f32) -> f32 {
     let coef = (freq * 2. * PI / self.sample_rate).sin();
     coef.clamp(0., 1.)
   }
 
-  fn mix(&mut self, a: f32, b: f32, interp: f32) -> f32 {
+  fn mix(&self, a: f32, b: f32, interp: f32) -> f32 {
     a * (1. - interp) + b * interp
   }
 
