@@ -55,7 +55,7 @@ impl Grain {
     self.drift = random::<f32>() * exponential_drift * 2. - exponential_drift;
     self.time_ramp.start(None);
 
-    let speed = 2_f32.powf(pitch / 12.);
+    let speed = 2_f32.powf((pitch + self.drift) / 12.);
     self.time_ramp_max = if self.is_reversed {
       (1. + speed) * freq
     } else {
