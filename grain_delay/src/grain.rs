@@ -51,7 +51,8 @@ impl Grain {
     self.is_reversed = random::<f32>() <= reverse;
     self.start_position = random::<f32>() * spray;
     self.pan = (random::<f32>() * pan * 2. - pan) * 50.;
-    self.drift = random::<f32>() * drift * 2. - drift;
+    let exponential_drift = drift.powf(2.);
+    self.drift = random::<f32>() * exponential_drift * 2. - exponential_drift;
     self.time_ramp.start(None);
 
     let speed = 2_f32.powf(pitch / 12.);
