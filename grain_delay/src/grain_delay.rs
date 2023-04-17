@@ -1,13 +1,15 @@
-use crate::dc_block::DcBlock;
-use crate::delay_line::{DelayLine, Interpolation};
-use crate::delta::Delta;
-use crate::grain::Grain;
-use crate::mix::Mix;
-use crate::one_pole_filter::{Mode, OnePoleFilter};
-use crate::one_pole_filter_stereo::{Mode as StereoMode, OnePoleFilterStereo};
-use crate::phasor::Phasor;
-use crate::variable_delay::VariableDelay;
-use crate::MAX_GRAIN_DELAY_TIME;
+use crate::{
+  dc_block::DcBlock,
+  delay_line::{DelayLine, Interpolation},
+  delta::Delta,
+  grain::Grain,
+  mix::Mix,
+  one_pole_filter::{Mode, OnePoleFilter},
+  one_pole_filter_stereo::{Mode as StereoMode, OnePoleFilterStereo},
+  phasor::Phasor,
+  variable_delay::VariableDelay,
+  MAX_GRAIN_DELAY_TIME,
+};
 use std::f32::consts::FRAC_1_SQRT_2;
 
 const VOICES: usize = 4;
@@ -16,7 +18,7 @@ pub struct GrainDelay {
   delay_line: DelayLine,
   variable_delay: VariableDelay,
   grain_delay_line: DelayLine,
-  one_pole_filter: OnePoleFilterStereo,
+  low_pass_filter: OnePoleFilterStereo,
   phasor: Phasor,
   delta: Delta,
   grains: Vec<Grain>,
@@ -36,7 +38,7 @@ impl GrainDelay {
         (sample_rate * MAX_GRAIN_DELAY_TIME).ceil() as usize,
         sample_rate,
       ),
-      one_pole_filter: OnePoleFilterStereo::new(sample_rate),
+      low_pass_filter: OnePoleFilterStereo::new(sample_rate),
       phasor: Phasor::new(sample_rate),
       delta: Delta::new(),
       grains: vec![Grain::new(sample_rate); VOICES * 2],
@@ -96,22 +98,10 @@ impl GrainDelay {
       })
   }
 
-  fn apply_filter(&mut self, input: (f32, f32), pitch: f32, filter: f32) -> (f32, f32) {
-    if filter > 0. {
-      let is_low_pass_filter = pitch > 0.;
-      if is_low_pass_filter {
-        self
-          .one_pole_filter
-          .run(input, filter.powf(0.33333), StereoMode::Linear)
-      } else {
-        let filter_out = self
-          .one_pole_filter
-          .run(input, 1. - filter.powf(3.), StereoMode::Linear);
-        (filter_out.0 - input.0, filter_out.1 - input.1)
-      }
-    } else {
-      input
-    }
+  fn apply_filter(&mut self, input: (f32, f32), filter: f32) -> (f32, f32) {
+    self
+      .low_pass_filter
+      .run(input, filter.powf(0.33333), StereoMode::Linear)
   }
 
   fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {
@@ -142,7 +132,7 @@ impl GrainDelay {
       .variable_delay
       .read(&mut self.delay_line, time, Interpolation::Linear);
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, spread);
-    let filter_out = self.apply_filter(grain_delay_out, pitch, filter);
+    let filter_out = self.apply_filter(grain_delay_out, filter);
     let feedback_out = self.apply_feedback(filter_out, feedback);
 
     self.delay_line.write(input + feedback_out);
