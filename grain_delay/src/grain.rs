@@ -76,13 +76,18 @@ impl Grain {
   }
 
   fn get_time(&mut self, speed: f32) -> f32 {
-    let ramp_freq = if self.is_reversed {
-      (1. + speed) * self.freq
+    if self.time_ramp_max == 0. {
+      self.time_ramp.run(self.freq, 0., 1.);
+      0.
     } else {
-      (1. - speed) * self.freq
-    };
+      let ramp_freq = if self.is_reversed {
+        (1. + speed) * self.freq
+      } else {
+        (1. - speed) * self.freq
+      };
 
-    self.time_ramp.run(ramp_freq, 0., self.time_ramp_max) * self.window_size
+      self.time_ramp.run(ramp_freq, 0., self.time_ramp_max) * self.window_size
+    }
   }
 
   fn get_window(&mut self) -> f32 {
