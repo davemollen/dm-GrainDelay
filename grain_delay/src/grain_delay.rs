@@ -99,9 +99,7 @@ impl GrainDelay {
   }
 
   fn apply_filter(&mut self, input: (f32, f32), filter: f32) -> (f32, f32) {
-    self
-      .low_pass_filter
-      .run(input, filter.powf(0.33333), StereoMode::Linear)
+    self.low_pass_filter.run(input, filter, StereoMode::Hertz)
   }
 
   fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {

@@ -23,7 +23,7 @@ impl Default for GrainDelayParameters {
       reverse: AtomicFloat::new(0.),
       time: AtomicFloat::new(0.),
       feedback: AtomicFloat::new(0.),
-      filter: AtomicFloat::new(0.),
+      filter: AtomicFloat::new(5000.),
       spread: AtomicFloat::new(0.),
       mix: AtomicFloat::new(0.5),
     }
@@ -40,7 +40,7 @@ impl PluginParameters for GrainDelayParameters {
       4 => self.reverse.get(),
       5 => (self.time.get() / 5000.).powf(0.333333),
       6 => self.feedback.get(),
-      7 => self.filter.get(),
+      7 => ((self.filter.get() - 20.) / 11005.).powf(0.333333),
       8 => self.spread.get(),
       9 => self.mix.get(),
       _ => 0.0,
@@ -49,16 +49,16 @@ impl PluginParameters for GrainDelayParameters {
 
   fn get_parameter_text(&self, index: i32) -> String {
     match index {
-      0 => format!("{:.2}ms", self.spray.get()),
-      1 => format!("{:.2}hz", self.frequency.get()),
-      2 => format!("{:.2}st", self.pitch.get()),
-      3 => format!("{:.2}%", self.drift.get() * 100.0),
-      4 => format!("{:.2}%", self.reverse.get() * 100.0),
-      5 => format!("{:.2}ms", self.time.get()),
-      6 => format!("{:.2}%", self.feedback.get() * 100.0),
-      7 => format!("{:.2}%", self.filter.get() * 100.0),
-      8 => format!("{:.2}%", self.spread.get() * 100.0),
-      9 => format!("{:.2}%", self.mix.get() * 100.0),
+      0 => format!("{:.2} ms", self.spray.get()),
+      1 => format!("{:.2} hz", self.frequency.get()),
+      2 => format!("{:.2} st", self.pitch.get()),
+      3 => format!("{:.2} %", self.drift.get() * 100.0),
+      4 => format!("{:.2} %", self.reverse.get() * 100.0),
+      5 => format!("{:.2} ms", self.time.get()),
+      6 => format!("{:.2} %", self.feedback.get() * 100.0),
+      7 => format!("{:.2} hz", self.filter.get()),
+      8 => format!("{:.2} %", self.spread.get() * 100.0),
+      9 => format!("{:.2} %", self.mix.get() * 100.0),
       _ => "".to_string(),
     }
   }
@@ -89,7 +89,7 @@ impl PluginParameters for GrainDelayParameters {
       4 => self.reverse.set(val),
       5 => self.time.set(val.powf(3.) * 5000.),
       6 => self.feedback.set(val),
-      7 => self.filter.set(val),
+      7 => self.filter.set(val.powf(3.) * 11005. + 20.),
       8 => self.spread.set(val),
       9 => self.mix.set(val),
       _ => (),

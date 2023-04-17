@@ -50,7 +50,7 @@ impl Plugin for DmGrainDelay {
     let reverse = *ports.reverse * 0.01;
     let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
-    let filter = *ports.filter * 0.01;
+    let filter = *ports.filter;
     let spread = *ports.spread * 0.01;
     let mix = *ports.mix * 0.01;
 

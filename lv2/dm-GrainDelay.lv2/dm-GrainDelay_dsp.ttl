@@ -93,10 +93,11 @@ A granular delay effect written in Rust.
 		lv2:index 7 ;
 		lv2:symbol "filter" ;
 		lv2:name "Filter" ;
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 100.0 ;
-		units:unit units:pc
+		lv2:portProperty epp:logarithmic ;
+		lv2:default 5000.0 ;
+		lv2:minimum 20.0 ;
+		lv2:maximum 11025.0 ;
+		units:unit units:hz
 	], [
 		a lv2:InputPort, lv2:ControlPort ;
 		lv2:index 8 ;
