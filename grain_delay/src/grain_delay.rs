@@ -38,7 +38,7 @@ impl GrainDelay {
       one_pole_filter: OnePoleFilter::new(sample_rate),
       phasor: Phasor::new(sample_rate),
       delta: Delta::new(),
-      grains: vec![Grain::new(sample_rate); VOICES],
+      grains: vec![Grain::new(sample_rate); VOICES * 2],
       index: 0,
       dc_block: DcBlock::new(sample_rate),
       smooth_filter: OnePoleFilter::new(sample_rate),
