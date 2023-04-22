@@ -1,3 +1,4 @@
+use crate::float_ext::FloatExt;
 use std::f32::consts::PI;
 
 pub trait Pan {
@@ -7,7 +8,7 @@ pub trait Pan {
 impl Pan for f32 {
   fn pan(self, pan: f32) -> (f32, f32) {
     let radians = (pan + 50.) * 0.005 * PI;
-    (self * radians.cos(), self * radians.sin())
+    (self * radians.fast_cos(), self * radians.fast_sin())
   }
 }
 

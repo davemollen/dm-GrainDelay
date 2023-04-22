@@ -1,3 +1,4 @@
+use crate::float_ext::FloatExt;
 use std::f32::consts::PI;
 
 #[allow(dead_code)]
@@ -26,7 +27,7 @@ impl OnePoleFilterStereo {
   }
 
   fn convert_hertz_to_coefficient(&self, freq: f32) -> f32 {
-    let coef = (freq * 2. * PI / self.sample_rate).sin();
+    let coef = (freq * 2. * PI / self.sample_rate).fast_sin();
     coef.clamp(0., 1.)
   }
 

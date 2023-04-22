@@ -1,5 +1,6 @@
 use crate::{
   delay_line::{DelayLine, Interpolation},
+  float_ext::FloatExt,
   ramp::Ramp,
 };
 use std::f32::consts::FRAC_PI_2;
@@ -21,7 +22,7 @@ impl VariableDelay {
 
   fn crossfade(&mut self, delay_line: &mut DelayLine, interp: Interpolation) -> f32 {
     let ramp = self.ramp.run(5., 0., 1.);
-    let window = (ramp * FRAC_PI_2).cos();
+    let window = (ramp * FRAC_PI_2).fast_cos();
     let window = window * window;
     delay_line.read(self.previous_time, interp) * window
       + delay_line.read(self.next_time, interp) * (1. - window)

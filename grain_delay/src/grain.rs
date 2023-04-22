@@ -1,5 +1,6 @@
 use crate::{
   delay_line::{DelayLine, Interpolation},
+  float_ext::FloatExt,
   pan::Pan,
   ramp::Ramp,
 };
@@ -51,7 +52,7 @@ impl Grain {
     self.is_reversed = random::<f32>() <= reverse;
     self.start_position = random::<f32>() * spray;
     self.pan = (random::<f32>() * pan * 2. - pan) * 50.;
-    let exponential_drift = drift.powf(2.);
+    let exponential_drift = drift.fast_pow(2.);
     self.drift = random::<f32>() * exponential_drift * 2. - exponential_drift;
     self.time_ramp.start(None);
 
@@ -91,6 +92,6 @@ impl Grain {
   }
 
   fn get_window(&mut self) -> f32 {
-    (self.time_ramp.get_progress() * PI).sin()
+    (self.time_ramp.get_progress() * PI).fast_sin()
   }
 }
