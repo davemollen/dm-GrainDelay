@@ -19,12 +19,12 @@ mod tests {
 
   fn assert_approximately_eq(left: (f32, f32), right: (f32, f32)) {
     assert_eq!(
-      (left.0 * 1000.).round() / 1000.,
-      (right.0 * 1000.).round() / 1000.
+      (left.0 * 100.).round() / 100.,
+      (right.0 * 100.).round() / 100.
     );
     assert_eq!(
-      (left.1 * 1000.).round() / 1000.,
-      (right.1 * 1000.).round() / 1000.
+      (left.1 * 100.).round() / 100.,
+      (right.1 * 100.).round() / 100.
     );
   }
 

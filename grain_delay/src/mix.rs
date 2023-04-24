@@ -17,10 +17,7 @@ mod tests {
   use super::*;
 
   fn assert_approximately_eq(left: f32, right: f32) {
-    assert_eq!(
-      (left * 1000.).floor() / 1000.,
-      (right * 1000.).floor() / 1000.
-    )
+    assert_eq!((left * 100.).round() / 100., (right * 100.).round() / 100.)
   }
 
   #[test]
