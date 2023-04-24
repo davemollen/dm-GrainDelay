@@ -22,6 +22,14 @@ You can find the plugin [here](./lv2/dm-GrainDelay.lv2/).
 - Enter Mod password
 - Reboot Mod
 
+## LV2 installation (for Mod)
+
+In order to build the binaries you need to have Docker installed. If so, proceed with the following steps:
+
+- Pull docker image: `docker pull ubuntu:16.04` for Mod Duo, `docker pull ubuntu:18.04` for Mod Dwarf.
+- Run `./scripts/build-lv2-for-mod.sh` in the root directory.
+- Copy/paste the binary of the target platform from the `./lv2/out` directory into `./lv2/<plugin name>.lv2`
+
 ## VST installation
 
 Windows:

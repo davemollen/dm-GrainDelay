@@ -70,7 +70,8 @@
 .mod-pedal-boxy{{{cns}}}.mod-five-knobs .mod-plugin-brand,
 .mod-pedal-boxy{{{cns}}}.mod-six-knobs .mod-plugin-brand,
 .mod-pedal-boxy{{{cns}}}.mod-seven-knobs .mod-plugin-brand,
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-plugin-brand {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-plugin-brand,
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-plugin-brand {
     top:190px;
 }
 
@@ -103,7 +104,8 @@
 .mod-pedal-boxy{{{cns}}}.mod-five-knobs .mod-plugin-name,
 .mod-pedal-boxy{{{cns}}}.mod-six-knobs .mod-plugin-name,
 .mod-pedal-boxy{{{cns}}}.mod-seven-knobs .mod-plugin-name,
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-plugin-name {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-plugin-name,
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-plugin-name {
     top:350px;
 }
 
@@ -127,7 +129,8 @@
 .mod-pedal-boxy{{{cns}}}.mod-five-knobs .mod-light,
 .mod-pedal-boxy{{{cns}}}.mod-six-knobs .mod-light,
 .mod-pedal-boxy{{{cns}}}.mod-seven-knobs .mod-light,
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-light {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-light,
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-light {
     top:253px;
 }
 
@@ -163,7 +166,8 @@
 .mod-pedal-boxy{{{cns}}}.mod-five-knobs .mod-footswitch,
 .mod-pedal-boxy{{{cns}}}.mod-six-knobs .mod-footswitch,
 .mod-pedal-boxy{{{cns}}}.mod-seven-knobs .mod-footswitch,
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-footswitch {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-footswitch,
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-footswitch {
     top:285px;
 }
 
@@ -261,7 +265,8 @@
 .mod-pedal-boxy{{{cns}}}.mod-five-knobs .mod-control-group .mod-knob .mod-knob-image,
 .mod-pedal-boxy{{{cns}}}.mod-six-knobs .mod-control-group .mod-knob .mod-knob-image,
 .mod-pedal-boxy{{{cns}}}.mod-seven-knobs .mod-control-group .mod-knob .mod-knob-image,
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-control-group .mod-knob .mod-knob-image {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-control-group .mod-knob .mod-knob-image,
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-control-group .mod-knob .mod-knob-image {
     background-image:url(/resources/knobs/lata/lata.png{{{ns}}});
     background-repeat:no-repeat;
     background-size:auto 60px;
@@ -274,13 +279,15 @@
 .mod-pedal-boxy{{{cns}}}.mod-five-knobs .mod-control-group .mod-knob,
 .mod-pedal-boxy{{{cns}}}.mod-six-knobs .mod-control-group .mod-knob,
 .mod-pedal-boxy{{{cns}}}.mod-seven-knobs .mod-control-group .mod-knob,
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-control-group .mod-knob {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-control-group .mod-knob,
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-control-group .mod-knob {
     display:inline-block;
     height:73px;
 }
 
 /* EIGTH KNOBS */
-.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-knob {
+.mod-pedal-boxy{{{cns}}}.mod-eight-knobs .mod-knob, 
+.mod-pedal-boxy{{{cns}}}.mod-ten-knobs .mod-knob {
     width:70px;
 }
 

@@ -8,13 +8,16 @@ struct Ports {
   spray: InputPort<Control>,
   frequency: InputPort<Control>,
   pitch: InputPort<Control>,
-  rand_pitch: InputPort<Control>,
-  delay_time: InputPort<Control>,
+  drift: InputPort<Control>,
+  reverse: InputPort<Control>,
+  time: InputPort<Control>,
   feedback: InputPort<Control>,
-  low_pass: InputPort<Control>,
+  filter: InputPort<Control>,
+  spread: InputPort<Control>,
   mix: InputPort<Control>,
   input: InputPort<Audio>,
-  output: OutputPort<Audio>,
+  output_left: OutputPort<Audio>,
+  output_right: OutputPort<Audio>,
 }
 
 #[uri("https://github.com/davemollen/dm-GrainDelay")]
@@ -39,20 +42,28 @@ impl Plugin for DmGrainDelay {
 
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
-  fn run(&mut self, ports: &mut Ports, _features: &mut ()) {
+  fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
     let spray = *ports.spray;
-    let frequency = *ports.frequency;
+    let freq = *ports.frequency;
     let pitch = *ports.pitch;
-    let rand_pitch = *ports.rand_pitch * 0.01;
-    let delay_time = *ports.delay_time;
+    let drift = *ports.drift * 0.01;
+    let reverse = *ports.reverse * 0.01;
+    let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
-    let low_pass = *ports.low_pass;
+    let filter = *ports.filter;
+    let spread = *ports.spread * 0.01;
     let mix = *ports.mix * 0.01;
 
-    for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-      *out_frame = self.grain_delay.run(
-        *in_frame, spray, frequency, pitch, rand_pitch, delay_time, feedback, low_pass, mix,
+    let output_channels = ports
+      .output_left
+      .iter_mut()
+      .zip(ports.output_right.iter_mut());
+    for (input, (out_left, out_right)) in ports.input.iter().zip(output_channels) {
+      let (grain_delay_left, grain_delay_right) = self.grain_delay.run(
+        *input, spray, freq, pitch, drift, reverse, time, feedback, filter, spread, mix,
       );
+      *out_left = grain_delay_left;
+      *out_right = grain_delay_right;
     }
   }
 }

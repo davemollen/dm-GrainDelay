@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Delta {
   z: f32,
 }

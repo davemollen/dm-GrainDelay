@@ -1,5 +1,16 @@
-use std::f32;
+use std::f32::consts::PI;
 
+#[allow(dead_code)]
+#[derive(Clone, Copy)]
+pub enum Interpolation {
+  Step,
+  Linear,
+  Cosine,
+  Cubic,
+  Spline,
+}
+
+#[derive(Clone)]
 pub struct DelayLine {
   buffer: Vec<f32>,
   write_pointer: usize,
@@ -16,7 +27,7 @@ impl DelayLine {
   }
 
   fn mstosamps(&self, time: f32) -> f32 {
-    time * 0.001 * self.sample_rate as f32
+    time * 0.001 * self.sample_rate
   }
 
   fn wrap(&self, index: usize) -> usize {
@@ -39,7 +50,7 @@ impl DelayLine {
   }
 
   fn cosine_interp(&self, index: usize, mix: f32) -> f32 {
-    let cosine_mix = (1. - (mix * f32::consts::PI).cos()) / 2.;
+    let cosine_mix = (1. - (mix * PI).cos()) / 2.;
     let x = self.buffer[self.wrap(index)];
     let y = self.buffer[self.wrap(index + 1)];
     x * (1. - cosine_mix) + y * cosine_mix
@@ -76,19 +87,18 @@ impl DelayLine {
     ((c3 * mix + c2) * mix + c1) * mix + c0
   }
 
-  pub fn read(&mut self, time: f32, interp: &str) -> f32 {
+  pub fn read(&mut self, time: f32, interp: Interpolation) -> f32 {
     let read_pointer = (self.write_pointer - 1 + self.buffer.len()) as f32 - self.mstosamps(time);
     let rounded_read_pointer = read_pointer.trunc();
     let mix = read_pointer - rounded_read_pointer;
     let index = rounded_read_pointer as usize;
 
     match interp {
-      "step" => self.step_interp(index),
-      "linear" => self.linear_interp(index, mix),
-      "cosine" => self.cosine_interp(index, mix),
-      "cubic" => self.cubic_interp(index - 1, mix),
-      "spline" => self.spline_interp(index - 1, mix),
-      _ => self.step_interp(index),
+      Interpolation::Step => self.step_interp(index),
+      Interpolation::Linear => self.linear_interp(index, mix),
+      Interpolation::Cosine => self.cosine_interp(index, mix),
+      Interpolation::Cubic => self.cubic_interp(index - 1, mix),
+      Interpolation::Spline => self.spline_interp(index - 1, mix),
     }
   }
 
