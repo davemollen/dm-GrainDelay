@@ -1,5 +1,5 @@
 [package]
-name = "dm_graindelay"
+name = "dm_grain_delay"
 version = "0.1.0"
 authors = ["Dave Mollen <davemollen@gmail.com>"]
 edition = "2021"

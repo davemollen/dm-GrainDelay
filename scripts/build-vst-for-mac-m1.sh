@@ -1,5 +1,5 @@
 PACKAGE_NAME=(`./scripts/get-package-name.sh vst`)
-NAME=$(echo $PACKAGE_NAME | perl -pe 's/(?<=[^\W_])_+([^\W_])|_+/-\U$1/g')
+NAME=$(echo $PACKAGE_NAME | perl -pe 's/dm_+([^\W_])/dm-\U$1/g' | perl -pe 's/(?<=[^\W_])_+([^\W_])/\U$1/g')
 VST_NAME="$NAME.vst"
 MOVE_TO="/Library/Audio/Plug-Ins/VST/$VST_NAME"
 BINARY_NAME="lib$PACKAGE_NAME.dylib"
