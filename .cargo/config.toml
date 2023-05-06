@@ -3,6 +3,7 @@
 [profile.release]
 opt-level = 3
 lto = true
+panic = "abort"
 
 [target.armv7-unknown-linux-gnueabihf]
 linker = "arm-linux-gnueabihf-gcc-4.9"
