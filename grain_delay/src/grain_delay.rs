@@ -131,7 +131,7 @@ impl GrainDelay {
 
     let delay_out = self
       .variable_delay
-      .read(&mut self.delay_line, time, Interpolation::Linear);
+      .read(&mut self.delay_line, time, Interpolation::Step);
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, spread);
     let filter_out = self.apply_filter(grain_delay_out, filter);
     let feedback_out = self.apply_feedback(filter_out, feedback);
