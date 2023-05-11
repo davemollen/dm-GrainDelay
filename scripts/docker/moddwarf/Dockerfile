@@ -29,13 +29,14 @@ ENV DYLD_LIBRARY_PATH="/llvm/lib:$DYLD_LIBRARY_PATH"
 # Get Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
-RUN rustup target add aarch64-unknown-linux-gnu
+RUN rustup install 1.58.1
+RUN rustup target add aarch64-unknown-linux-gnu --toolchain 1.58.1
 
 # Copy files
 COPY ./ ./
 
 # Build 
-RUN cd lv2 && cargo build --release --target aarch64-unknown-linux-gnu
+RUN cd lv2 && cargo +1.58.1 build --release --target aarch64-unknown-linux-gnu
 
 # Export
 FROM scratch AS moddwarf-export
