@@ -41,7 +41,7 @@ impl OnePoleFilter {
   }
 
   pub fn run(&mut self, input: f32, cutoff_freq: f32, mode: Mode) -> f32 {
-    if (input - self.z).abs().is_subnormal() {
+    if (input - self.z).is_subnormal() {
       input
     } else {
       self.apply_filter(input, cutoff_freq, mode)

@@ -37,7 +37,7 @@ impl OnePoleFilterStereo {
   }
 
   fn z_is_subnormal(&self, input: (f32, f32)) -> bool {
-    (input.0 - self.z.0).abs().is_subnormal() && (input.1 - self.z.1).abs().is_subnormal()
+    (input.0 - self.z.0).is_subnormal() && (input.1 - self.z.1).is_subnormal()
   }
 
   fn apply_filter(&mut self, input: (f32, f32), cutoff_freq: f32, mode: Mode) -> (f32, f32) {
