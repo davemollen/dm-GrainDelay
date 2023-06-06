@@ -1,6 +1,6 @@
 [build]
 
 [profile.release]
-opt-level = 1
-lto = false
+opt-level = 3
+lto = true
 panic = "abort"
