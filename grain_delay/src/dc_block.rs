@@ -13,7 +13,7 @@ impl DcBlock {
     }
   }
 
-  pub fn run(&mut self, x: f32) -> f32 {
+  pub fn process(&mut self, x: f32) -> f32 {
     let coeff = 1. - (220.5 / self.sample_rate);
     let y = x - self.xm1 + coeff * self.ym1;
     self.xm1 = x;

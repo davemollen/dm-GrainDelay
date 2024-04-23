@@ -66,7 +66,7 @@ impl Grain {
       / freq;
   }
 
-  pub fn run(&mut self, grain_delay_line: &mut DelayLine, pitch: f32) -> (f32, f32) {
+  pub fn process(&mut self, grain_delay_line: &mut DelayLine, pitch: f32) -> (f32, f32) {
     let speed = 2_f32.powf((pitch + self.drift) / 12.);
     let time = self.get_time(speed);
     let window = self.get_window();
@@ -78,7 +78,7 @@ impl Grain {
 
   fn get_time(&mut self, speed: f32) -> f32 {
     if self.time_ramp_max == 0. {
-      self.time_ramp.run(self.freq, 0., 1.);
+      self.time_ramp.process(self.freq, 0., 1.);
       0.
     } else {
       let ramp_freq = if self.is_reversed {
@@ -87,7 +87,7 @@ impl Grain {
         (1. - speed) * self.freq
       };
 
-      self.time_ramp.run(ramp_freq, 0., self.time_ramp_max) * self.window_size
+      self.time_ramp.process(ramp_freq, 0., self.time_ramp_max) * self.window_size
     }
   }
 

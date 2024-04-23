@@ -61,7 +61,7 @@ impl Plugin for DmGrainDelay {
       .iter_mut()
       .zip(output_channels.get_mut(1).iter_mut());
     for (input, (output_left, output_right)) in input.iter().zip(zipped_output_channels) {
-      let (grain_delay_left, grain_delay_right) = self.grain_delay.run(
+      let (grain_delay_left, grain_delay_right) = self.grain_delay.process(
         *input, spray, freq, pitch, drift, reverse, time, feedback, filter, spread, mix,
       );
       *output_left = grain_delay_left;

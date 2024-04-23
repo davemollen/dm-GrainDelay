@@ -1,17 +1,17 @@
-PACKAGE_NAME=(`./scripts/get-package-name.sh vst`)
-NAME=$(echo $PACKAGE_NAME | perl -pe 's/dm_+([^\W_])/dm-\U$1/g' | perl -pe 's/(?<=[^\W_])_+([^\W_])/\U$1/g')
-VST_NAME="$NAME.vst"
-MOVE_TO="/Library/Audio/Plug-Ins/VST/$VST_NAME"
-BINARY_NAME="lib$PACKAGE_NAME.dylib"
+name="dm-GrainDelay"
+binary_name="libdm_grain_delay.dylib"
+vst_name="$name.vst"
+move_to="/Library/Audio/Plug-Ins/VST/$vst_name"
 
 cd vst
 cargo build --release
-../scripts/osx_vst_bundler.sh $NAME target/release/$BINARY_NAME 
+cd target/release
+../../../scripts/osx_vst_bundler.sh $name $binary_name 
 
-if [ -d "$MOVE_TO" ]; then
-    rm -r "$MOVE_TO"
+if [ -d "$move_to" ]; then
+    rm -r "$move_to"
 fi
 
-if mv "$VST_NAME" "$MOVE_TO"; then
-    echo "Copied VST bundle to $MOVE_TO"
+if mv "$vst_name" "$move_to"; then
+    echo "Copied VST bundle to $move_to"
 fi

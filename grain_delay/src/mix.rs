@@ -4,7 +4,7 @@ use std::f32::consts::FRAC_PI_2;
 pub struct Mix;
 
 impl Mix {
-  pub fn run(dry: f32, wet: (f32, f32), mix: f32) -> (f32, f32) {
+  pub fn process(dry: f32, wet: (f32, f32), mix: f32) -> (f32, f32) {
     let dry_gain = (mix * FRAC_PI_2).fast_cos();
     let wet_gain = (mix * FRAC_PI_2).fast_sin();
     let dry_out = dry * dry_gain;
@@ -22,9 +22,9 @@ mod tests {
 
   #[test]
   fn mix() {
-    let first = Mix::run(0., (1., 1.), 0.);
-    let second = Mix::run(0., (1., 1.), 0.5);
-    let third = Mix::run(0., (1., 1.), 1.);
+    let first = Mix::process(0., (1., 1.), 0.);
+    let second = Mix::process(0., (1., 1.), 0.5);
+    let third = Mix::process(0., (1., 1.), 1.);
     assert_approximately_eq(first.0, 0.);
     assert_approximately_eq(first.1, 0.);
     assert_approximately_eq(second.0, 0.707);

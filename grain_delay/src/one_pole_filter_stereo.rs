@@ -20,6 +20,24 @@ impl OnePoleFilterStereo {
     }
   }
 
+  pub fn process(&mut self, input: (f32, f32), cutoff_freq: f32, mode: Mode) -> (f32, f32) {
+    if self.z_is_subnormal(input) {
+      input
+    } else {
+      self.apply_filter(input, cutoff_freq, mode)
+    }
+  }
+
+  fn apply_filter(&mut self, input: (f32, f32), cutoff_freq: f32, mode: Mode) -> (f32, f32) {
+    let coefficient = match mode {
+      Mode::Linear => self.convert_linear_input_to_coefficient(cutoff_freq),
+      Mode::Hertz => self.convert_hertz_to_coefficient(cutoff_freq),
+    };
+    let output = self.mix(self.z, input, coefficient);
+    self.z = output;
+    output
+  }
+
   fn convert_linear_input_to_coefficient(&self, r: f32) -> f32 {
     (1. - r) / 44100. * self.sample_rate
   }
@@ -38,23 +56,5 @@ impl OnePoleFilterStereo {
 
   fn z_is_subnormal(&self, input: (f32, f32)) -> bool {
     (input.0 - self.z.0).is_subnormal() && (input.1 - self.z.1).is_subnormal()
-  }
-
-  fn apply_filter(&mut self, input: (f32, f32), cutoff_freq: f32, mode: Mode) -> (f32, f32) {
-    let coefficient = match mode {
-      Mode::Linear => self.convert_linear_input_to_coefficient(cutoff_freq),
-      Mode::Hertz => self.convert_hertz_to_coefficient(cutoff_freq),
-    };
-    let output = self.mix(self.z, input, coefficient);
-    self.z = output;
-    output
-  }
-
-  pub fn run(&mut self, input: (f32, f32), cutoff_freq: f32, mode: Mode) -> (f32, f32) {
-    if self.z_is_subnormal(input) {
-      input
-    } else {
-      self.apply_filter(input, cutoff_freq, mode)
-    }
   }
 }

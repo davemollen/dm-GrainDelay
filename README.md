@@ -1,8 +1,8 @@
 ## dm-GrainDelay
 
 A granular delay effect written in Rust.
-The effect can be compiled to a [lv2](./lv2) or [vst](./vst) plugin.
-This plugin has been written primarily to run on [Mod devices](https://moddevices.com/). And because I mainly use this for guitar it's just mono for now.
+The effect is available for [Mod devices](https://moddevices.com/) and you can compile it to a VST plugin.
+This plugin has been written primarily to run on [Mod devices](https://moddevices.com/). It's a mono to stereo plugin.
 
 ## Table of contents:
 
@@ -10,32 +10,16 @@ This plugin has been written primarily to run on [Mod devices](https://moddevice
 - [VST installation](#VST-installation)
 
 ## Mod devices installation
-
-You can find the plugin [here](./lv2/dm-GrainDelay.lv2/).
-
-- Copy the .lv2 plugin to your Mod:
-
-  ```
-  scp -rp <path to dm-GrainDelay.lv2> root@192.168.51.1:/root/.lv2
-  ```
-
-- Enter Mod password
-- Reboot Mod
-
-## LV2 installation (for Mod)
-
-In order to build the binaries you need to have Docker installed. If so, proceed with the following steps:
-
-- Pull docker image: `docker pull ubuntu:16.04` for Mod Duo, `docker pull ubuntu:18.04` for Mod Dwarf.
-- Run `./scripts/build-lv2-for-mod.sh` in the root directory.
-- Copy/paste the binary of the target platform from the `./lv2/out` directory into `./lv2/<plugin name>.lv2`
+Install it through the Mod Plugin store. It's available as a beta plugin.
 
 ## VST installation
 
+To build the plugin you need to install Rust first.
+
 Windows:
 
-1. Run `./scripts/build-vst.sh`
-2. Copy dll file in /target/release to your vst plugin folder
+1. Go to the vst folder and run `cargo build --release`
+2. Copy the plugin file in /target/release to your vst plugin folder
 
 Intel Mac:
 

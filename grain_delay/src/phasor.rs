@@ -18,7 +18,7 @@ impl Phasor {
     }
   }
 
-  pub fn run(&mut self, freq: f32) -> f32 {
+  pub fn process(&mut self, freq: f32) -> f32 {
     let multiplier = 1. / self.sample_rate;
     self.x = self.wrap(self.x + freq * multiplier);
     self.x
