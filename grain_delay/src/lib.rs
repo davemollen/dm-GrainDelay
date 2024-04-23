@@ -46,7 +46,7 @@ impl GrainDelay {
     Self {
       variable_delay_line: VariableDelayLine::new((sample_rate * 5.) as usize, sample_rate),
       grain_delay_line: DelayLine::new(
-        (sample_rate * MAX_GRAIN_DELAY_TIME).ceil() as usize,
+        (sample_rate * MAX_GRAIN_DELAY_TIME) as usize,
         sample_rate,
       ),
       low_pass_filter: OnePoleFilterStereo::new(sample_rate),

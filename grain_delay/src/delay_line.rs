@@ -48,7 +48,7 @@ impl DelayLine {
     let read_pointer = (self.write_pointer + self.buffer.len()) as f32 - (self.mstosamps(time) - 0.5).max(1.);
     let index = read_pointer.trunc() as usize;
 
-    self.buffer[index + 1 & self.wrap]
+    self.buffer[index & self.wrap]
   }
 
   fn linear_interp(&self, time: f32) -> f32 {
