@@ -1,7 +1,8 @@
+mod ramp;
+use ramp::Ramp;
 use crate::{
   delay_line::{DelayLine, Interpolation},
   float_ext::FloatExt,
-  ramp::Ramp,
 };
 use std::f32::consts::FRAC_PI_2;
 
@@ -33,7 +34,7 @@ impl VariableDelayLine {
       (true, true) => {
         self.previous_time = self.next_time;
         self.next_time = time;
-        self.ramp.start(None);
+        self.ramp.start();
         self.crossfade(interp)
       }
       _ => self.crossfade(interp),
@@ -45,7 +46,7 @@ impl VariableDelayLine {
   }
 
   fn crossfade(&mut self, interp: Interpolation) -> f32 {
-    let ramp = self.ramp.process(5., 0., 1.);
+    let ramp = self.ramp.process(5.);
     let window = (ramp * FRAC_PI_2).fast_cos();
     let window = window * window;
     self.delay_line.read(self.previous_time, interp) * window
