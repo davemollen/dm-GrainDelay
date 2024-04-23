@@ -33,7 +33,6 @@ pub struct GrainDelay {
   phasor: Phasor,
   delta: Delta,
   grains: Vec<Grain>,
-  index: usize,
   dc_block: DcBlock,
   smooth_pitch: OnePoleFilter,
   smooth_filter: OnePoleFilter,
@@ -53,7 +52,6 @@ impl GrainDelay {
       phasor: Phasor::new(sample_rate),
       delta: Delta::new(),
       grains: vec![Grain::new(sample_rate); VOICES * 2],
-      index: 0,
       dc_block: DcBlock::new(sample_rate),
       smooth_pitch: OnePoleFilter::new(sample_rate),
       smooth_filter: OnePoleFilter::new(sample_rate),
@@ -93,28 +91,6 @@ impl GrainDelay {
     Mix::process(input, filter_out, mix)
   }
 
-  fn set_grain_parameters(
-    &mut self,
-    freq: f32,
-    spray: f32,
-    pitch: f32,
-    drift: f32,
-    reverse: f32,
-    spread: f32,
-  ) {
-    let window_size = 1000. / freq;
-
-    let (start, end) = self.grains.split_at(self.index);
-    let index = start.iter().chain(end).position(|grain| grain.is_free());
-    match index {
-      Some(i) => {
-        self.grains[i].set_parameters(freq, window_size, spray, pitch, drift, reverse, spread);
-        self.index = i;
-      }
-      None => {}
-    }
-  }
-
   fn grain_delay(
     &mut self,
     spray: f32,
@@ -139,6 +115,26 @@ impl GrainDelay {
       .fold((0., 0.), |sum, grain_out| {
         (sum.0 + grain_out.0, sum.1 + grain_out.1)
       })
+  }
+
+  fn set_grain_parameters(
+    &mut self,
+    freq: f32,
+    spray: f32,
+    pitch: f32,
+    drift: f32,
+    reverse: f32,
+    spread: f32,
+  ) {
+    let window_size = 1000. / freq;
+
+    let grain = self.grains.iter_mut().find(|grain| grain.is_free());
+    match grain {
+      Some(g) => {
+        g.set_parameters(freq, window_size, spray, pitch, drift, reverse, spread);
+      }
+      None => {}
+    }
   }
 
   fn apply_filter(&mut self, input: (f32, f32), filter: f32) -> (f32, f32) {
