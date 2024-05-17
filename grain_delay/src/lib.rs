@@ -5,8 +5,8 @@ mod delta;
 mod float_ext;
 mod grain;
 mod mix;
-mod one_pole_filter;
 mod one_pole_filter_stereo;
+mod param_filter;
 mod phasor;
 mod variable_delay_line;
 use {
@@ -15,10 +15,9 @@ use {
   delta::Delta,
   grain::Grain,
   mix::Mix,
-  one_pole_filter::{Mode, OnePoleFilter},
-  one_pole_filter_stereo::{Mode as StereoMode, OnePoleFilterStereo},
+  one_pole_filter_stereo::OnePoleFilterStereo,
+  param_filter::ParamFilter,
   phasor::Phasor,
-  std::f32::consts::FRAC_1_SQRT_2,
   variable_delay_line::VariableDelayLine,
 };
 
@@ -32,10 +31,10 @@ pub struct GrainDelay {
   delta: Delta,
   grains: Vec<Grain>,
   dc_block: DcBlock,
-  smooth_pitch: OnePoleFilter,
-  smooth_filter: OnePoleFilter,
-  smooth_feedback: OnePoleFilter,
-  smooth_mix: OnePoleFilter,
+  smooth_pitch: ParamFilter,
+  smooth_filter: ParamFilter,
+  smooth_feedback: ParamFilter,
+  smooth_mix: ParamFilter,
 }
 
 impl GrainDelay {
@@ -48,10 +47,10 @@ impl GrainDelay {
       delta: Delta::new(),
       grains: vec![Grain::new(sample_rate); VOICES * 2],
       dc_block: DcBlock::new(sample_rate),
-      smooth_pitch: OnePoleFilter::new(sample_rate),
-      smooth_filter: OnePoleFilter::new(sample_rate),
-      smooth_feedback: OnePoleFilter::new(sample_rate),
-      smooth_mix: OnePoleFilter::new(sample_rate),
+      smooth_pitch: ParamFilter::new(sample_rate, 12.),
+      smooth_filter: ParamFilter::new(sample_rate, 12.),
+      smooth_feedback: ParamFilter::new(sample_rate, 12.),
+      smooth_mix: ParamFilter::new(sample_rate, 12.),
     }
   }
 
@@ -69,10 +68,10 @@ impl GrainDelay {
     spread: f32,
     mix: f32,
   ) -> (f32, f32) {
-    let pitch = self.smooth_pitch.process(pitch, 12., Mode::Hertz);
-    let filter = self.smooth_filter.process(filter, 12., Mode::Hertz);
-    let feedback = self.smooth_feedback.process(feedback, 12., Mode::Hertz);
-    let mix = self.smooth_mix.process(mix, 12., Mode::Hertz);
+    let pitch = self.smooth_pitch.process(pitch);
+    let filter = self.smooth_filter.process(filter);
+    let feedback = self.smooth_feedback.process(feedback);
+    let mix = self.smooth_mix.process(mix);
 
     let delay_out = self.variable_delay_line.read(time, Interpolation::Step);
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, spread);
@@ -131,14 +130,12 @@ impl GrainDelay {
   }
 
   fn apply_filter(&mut self, input: (f32, f32), filter: f32) -> (f32, f32) {
-    self
-      .low_pass_filter
-      .process(input, filter, StereoMode::Hertz)
+    self.low_pass_filter.process(input, filter)
   }
 
   fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {
-    let mono_input = (input.0 + input.1) * FRAC_1_SQRT_2;
-    let feedback_out = mono_input * 0.5 * feedback;
+    let mono_input = (input.0 + input.1) * 0.5;
+    let feedback_out = mono_input * feedback;
     self.dc_block.process(feedback_out.clamp(-1., 1.))
   }
 }
