@@ -4,7 +4,6 @@ use crate::{
   pan::Pan,
   ramp::Ramp,
 };
-use rand::random;
 use std::f32::consts::PI;
 
 #[derive(Clone)]
@@ -49,11 +48,11 @@ impl Grain {
   ) {
     self.freq = freq;
     self.window_size = window_size;
-    self.is_reversed = random::<f32>() <= reverse;
-    self.start_position = random::<f32>() * spray;
-    self.pan = (random::<f32>() * pan * 2. - pan) * 50.;
+    self.is_reversed = fastrand::f32() <= reverse;
+    self.start_position = fastrand::f32() * spray;
+    self.pan = (fastrand::f32() * pan * 2. - pan) * 50.;
     let exponential_drift = drift.fast_pow(2.);
-    self.drift = random::<f32>() * exponential_drift * 2. - exponential_drift;
+    self.drift = fastrand::f32() * exponential_drift * 2. - exponential_drift;
     self.time_ramp.start(None);
 
     let speed = 2_f32.powf((pitch + self.drift) / 12.);

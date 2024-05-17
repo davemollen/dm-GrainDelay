@@ -5,4 +5,4 @@ authors = ["davemollen <davemollen@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-rand = "0.8.4"
+fastrand = "2.1.0"
