@@ -1,10 +1,11 @@
+mod pan;
+mod ramp;
 use crate::{
   delay_line::{DelayLine, Interpolation},
   float_ext::FloatExt,
-  pan::Pan,
-  ramp::Ramp,
 };
 use std::f32::consts::PI;
+use {pan::Pan, ramp::Ramp};
 
 #[derive(Clone)]
 pub struct Grain {

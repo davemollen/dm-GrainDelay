@@ -7,9 +7,7 @@ mod grain;
 mod mix;
 mod one_pole_filter;
 mod one_pole_filter_stereo;
-mod pan;
 mod phasor;
-mod ramp;
 mod variable_delay_line;
 use {
   dc_block::DcBlock,
@@ -20,8 +18,8 @@ use {
   one_pole_filter::{Mode, OnePoleFilter},
   one_pole_filter_stereo::{Mode as StereoMode, OnePoleFilterStereo},
   phasor::Phasor,
-  variable_delay_line::VariableDelayLine,
   std::f32::consts::FRAC_1_SQRT_2,
+  variable_delay_line::VariableDelayLine,
 };
 
 const VOICES: usize = 4;
@@ -44,10 +42,7 @@ impl GrainDelay {
   pub fn new(sample_rate: f32) -> Self {
     Self {
       variable_delay_line: VariableDelayLine::new((sample_rate * 5.) as usize, sample_rate),
-      grain_delay_line: DelayLine::new(
-        (sample_rate * MAX_GRAIN_DELAY_TIME) as usize,
-        sample_rate,
-      ),
+      grain_delay_line: DelayLine::new((sample_rate * MAX_GRAIN_DELAY_TIME) as usize, sample_rate),
       low_pass_filter: OnePoleFilterStereo::new(sample_rate),
       phasor: Phasor::new(sample_rate),
       delta: Delta::new(),
@@ -79,9 +74,7 @@ impl GrainDelay {
     let feedback = self.smooth_feedback.process(feedback, 12., Mode::Hertz);
     let mix = self.smooth_mix.process(mix, 12., Mode::Hertz);
 
-    let delay_out = self
-      .variable_delay_line
-      .read(time, Interpolation::Step);
+    let delay_out = self.variable_delay_line.read(time, Interpolation::Step);
     let grain_delay_out = self.grain_delay(spray, freq, pitch, drift, reverse, spread);
     let filter_out = self.apply_filter(grain_delay_out, filter);
     let feedback_out = self.apply_feedback(filter_out, feedback);
@@ -138,7 +131,9 @@ impl GrainDelay {
   }
 
   fn apply_filter(&mut self, input: (f32, f32), filter: f32) -> (f32, f32) {
-    self.low_pass_filter.process(input, filter, StereoMode::Hertz)
+    self
+      .low_pass_filter
+      .process(input, filter, StereoMode::Hertz)
   }
 
   fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {
@@ -147,4 +142,3 @@ impl GrainDelay {
     self.dc_block.process(feedback_out.clamp(-1., 1.))
   }
 }
-
