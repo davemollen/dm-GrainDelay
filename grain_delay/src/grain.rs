@@ -72,7 +72,7 @@ impl Grain {
     let window = self.get_window();
 
     let grains_out = grain_delay_line.read(time + self.start_position, Interpolation::Linear);
-    let windowed_grains_out = grains_out * window * window;
+    let windowed_grains_out = grains_out * window;
     windowed_grains_out.pan(self.pan)
   }
 
@@ -92,6 +92,7 @@ impl Grain {
   }
 
   fn get_window(&mut self) -> f32 {
-    (self.time_ramp.get_progress() * PI).fast_sin()
+    let window = (self.time_ramp.get_progress() * PI).fast_sin();
+    window * window
   }
 }
