@@ -1,21 +1,23 @@
 include!(concat!(env!("OUT_DIR"), "/constants.rs"));
 mod dc_block;
 mod delay_line;
+mod delta;
 mod float_ext;
 mod grain;
 mod mix;
 mod one_pole_filter_stereo;
 mod param_filter;
-mod pulse_train;
+mod phasor;
 mod variable_delay_line;
 use {
   dc_block::DcBlock,
   delay_line::{DelayLine, Interpolation},
+  delta::Delta,
   grain::Grain,
   mix::Mix,
   one_pole_filter_stereo::OnePoleFilterStereo,
   param_filter::ParamFilter,
-  pulse_train::PulseTrain,
+  phasor::Phasor,
   variable_delay_line::VariableDelayLine,
 };
 
@@ -25,7 +27,8 @@ pub struct GrainDelay {
   variable_delay_line: VariableDelayLine,
   grain_delay_line: DelayLine,
   low_pass_filter: OnePoleFilterStereo,
-  pulse_train: PulseTrain,
+  phasor: Phasor,
+  delta: Delta,
   grains: Vec<Grain>,
   dc_block: DcBlock,
   smooth_pitch: ParamFilter,
@@ -40,8 +43,9 @@ impl GrainDelay {
       variable_delay_line: VariableDelayLine::new((sample_rate * 5.) as usize, sample_rate),
       grain_delay_line: DelayLine::new((sample_rate * MAX_GRAIN_DELAY_TIME) as usize, sample_rate),
       low_pass_filter: OnePoleFilterStereo::new(sample_rate),
-      pulse_train: PulseTrain::new(sample_rate),
+      phasor: Phasor::new(sample_rate),
       grains: vec![Grain::new(sample_rate); VOICES * 2],
+      delta: Delta::new(),
       dc_block: DcBlock::new(sample_rate),
       smooth_pitch: ParamFilter::new(sample_rate, 12.),
       smooth_filter: ParamFilter::new(sample_rate, 12.),
@@ -88,7 +92,8 @@ impl GrainDelay {
     reverse: f32,
     spread: f32,
   ) -> (f32, f32) {
-    let trigger = self.pulse_train.process(freq * VOICES as f32);
+    let phasor_output = self.phasor.process(freq * VOICES as f32);
+    let trigger = self.delta.process(phasor_output) < 0.;
     if trigger {
       self.set_grain_parameters(freq, spray, pitch, drift, reverse, spread);
     }
