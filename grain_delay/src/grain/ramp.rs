@@ -1,6 +1,6 @@
 #[derive(Clone)]
 pub struct Ramp {
-  sample_rate: f32,
+  sample_period: f32,
   x: Option<f32>,
   is_active: bool,
   started_in_reverse: bool,
@@ -10,7 +10,7 @@ pub struct Ramp {
 impl Ramp {
   pub fn new(sample_rate: f32) -> Self {
     Self {
-      sample_rate,
+      sample_period: sample_rate.recip(),
       x: None,
       is_active: false,
       started_in_reverse: false,
@@ -28,7 +28,7 @@ impl Ramp {
     self.set_progress(x, min, max);
     x
   }
-  
+
   pub fn get_progress(&self) -> f32 {
     self.progress
   }
@@ -58,7 +58,7 @@ impl Ramp {
   }
 
   fn get_step_size(&self, freq: f32) -> f32 {
-    1. / self.sample_rate * freq
+    freq * self.sample_period
   }
 
   fn set_progress(&mut self, x: f32, min: f32, max: f32) {
@@ -74,7 +74,7 @@ impl Ramp {
     if next_x <= min || next_x >= max {
       self.is_active = false;
     }
-    let x = next_x.max(min).min(max);
+    let x = next_x.clamp(min, max);
     self.x = Some(x);
     x
   }
