@@ -47,7 +47,7 @@ impl Plugin for DmGrainDelay {
   fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
     let spray = self.params.spray.get();
     let freq = self.params.frequency.get();
-    let pitch = self.params.pitch.get();
+    let speed = self.params.pitch.get();
     let drift = self.params.drift.get().fast_pow(2.);
     let reverse = self.params.reverse.get();
     let time = self.params.time.get();
@@ -71,7 +71,7 @@ impl Plugin for DmGrainDelay {
       .zip(output_channels.get_mut(1).iter_mut());
     for (input, (output_left, output_right)) in input.iter().zip(zipped_output_channels) {
       let (grain_delay_left, grain_delay_right) = self.grain_delay.process(
-        *input, spray, freq, pitch, drift, reverse, time, feedback, filter, spread, mix,
+        *input, spray, freq, speed, drift, reverse, time, feedback, filter, spread, mix,
       );
       *output_left = grain_delay_left;
       *output_right = grain_delay_right;

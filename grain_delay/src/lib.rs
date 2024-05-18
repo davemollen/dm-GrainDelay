@@ -2,7 +2,6 @@ include!(concat!(env!("OUT_DIR"), "/constants.rs"));
 mod dc_block;
 mod shared {
   pub mod delay_line;
-  pub mod delta;
   pub mod float_ext;
 }
 mod grains;
