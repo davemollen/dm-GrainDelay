@@ -1,4 +1,4 @@
-use crate::float_ext::FloatExt;
+use crate::shared::float_ext::FloatExt;
 use std::f32::consts::FRAC_PI_2;
 
 pub struct Mix;

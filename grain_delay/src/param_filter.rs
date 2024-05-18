@@ -1,6 +1,6 @@
 use std::f32::consts::TAU;
 
-use crate::float_ext::FloatExt;
+use crate::shared::float_ext::FloatExt;
 
 pub struct ParamFilter {
   b1: f32,
