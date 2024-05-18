@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate vst;
 mod grain_delay_parameters;
-use grain_delay::GrainDelay;
+use grain_delay::{FloatExt, GrainDelay};
 use grain_delay_parameters::GrainDelayParameters;
 use std::sync::Arc;
 use vst::{
@@ -46,7 +46,7 @@ impl Plugin for DmGrainDelay {
     let spray = self.params.spray.get();
     let freq = self.params.frequency.get();
     let pitch = self.params.pitch.get();
-    let drift = self.params.drift.get();
+    let drift = self.params.drift.get().fast_pow(2.);
     let reverse = self.params.reverse.get();
     let time = self.params.time.get();
     let feedback = self.params.feedback.get();

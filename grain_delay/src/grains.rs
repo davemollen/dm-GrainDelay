@@ -2,9 +2,11 @@ mod grain;
 mod phasor;
 use crate::{
   shared::{delay_line::DelayLine, delta::Delta},
-  MAX_GRAIN_DELAY_TIME, VOICES,
+  MAX_GRAIN_DELAY_TIME,
 };
 use {grain::Grain, phasor::Phasor};
+
+const VOICES: usize = 4;
 
 pub struct Grains {
   grain_delay_line: DelayLine,

@@ -46,7 +46,7 @@ impl Plugin for DmGrainDelay {
     let spray = *ports.spray;
     let freq = *ports.frequency;
     let pitch = *ports.pitch;
-    let drift = *ports.drift * 0.01;
+    let drift = (*ports.drift * 0.01).fast_pow(2.);
     let reverse = *ports.reverse * 0.01;
     let time = *ports.time;
     let feedback = *ports.feedback * 0.01;

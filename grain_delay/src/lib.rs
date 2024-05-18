@@ -17,8 +17,6 @@ use {
   variable_delay_line::VariableDelayLine,
 };
 
-const VOICES: usize = 4;
-
 pub struct GrainDelay {
   variable_delay_line: VariableDelayLine,
   low_pass_filter: OnePoleFilterStereo,
