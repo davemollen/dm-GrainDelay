@@ -21,7 +21,7 @@ pub struct GrainDelay {
   low_pass_filter: OnePoleFilterStereo,
   grains: Grains,
   dc_block: DcBlock,
-  smooth_pitch: ParamFilter,
+  smooth_speed: ParamFilter,
   smooth_filter: ParamFilter,
   smooth_feedback: ParamFilter,
   smooth_mix: ParamFilter,
@@ -34,7 +34,7 @@ impl GrainDelay {
       low_pass_filter: OnePoleFilterStereo::new(sample_rate),
       grains: Grains::new(sample_rate),
       dc_block: DcBlock::new(sample_rate),
-      smooth_pitch: ParamFilter::new(sample_rate, 12.),
+      smooth_speed: ParamFilter::new(sample_rate, 12.),
       smooth_filter: ParamFilter::new(sample_rate, 12.),
       smooth_feedback: ParamFilter::new(sample_rate, 12.),
       smooth_mix: ParamFilter::new(sample_rate, 12.),
@@ -42,7 +42,7 @@ impl GrainDelay {
   }
 
   pub fn initialize_params(&mut self, pitch: f32, filter: f32, feedback: f32, mix: f32) {
-    self.smooth_pitch.initialize(pitch);
+    self.smooth_speed.initialize(pitch);
     self.smooth_filter.initialize(filter);
     self.smooth_feedback.initialize(feedback);
     self.smooth_mix.initialize(mix);
@@ -53,7 +53,7 @@ impl GrainDelay {
     input: f32,
     spray: f32,
     freq: f32,
-    pitch: f32,
+    speed: f32,
     drift: f32,
     reverse: f32,
     time: f32,
@@ -62,7 +62,7 @@ impl GrainDelay {
     spread: f32,
     mix: f32,
   ) -> (f32, f32) {
-    let pitch = self.smooth_pitch.process(pitch);
+    let speed = self.smooth_speed.process(speed);
     let filter = self.smooth_filter.process(filter);
     let feedback = self.smooth_feedback.process(feedback);
     let mix = self.smooth_mix.process(mix);
@@ -70,7 +70,7 @@ impl GrainDelay {
     let delay_out = self.variable_delay_line.read(time, Interpolation::Step);
     let grain_delay_out = self
       .grains
-      .process(delay_out, spray, freq, pitch, drift, reverse, spread);
+      .process(delay_out, spray, freq, speed, drift, reverse, spread);
     let filter_out = self.low_pass_filter.process(grain_delay_out, filter);
     let feedback_out = self.apply_feedback(filter_out, feedback);
     self.variable_delay_line.write(input + feedback_out);

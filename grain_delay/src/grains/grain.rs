@@ -19,7 +19,6 @@ pub struct Grain {
   phase_offset: f32,
   delta: Delta,
   time_multiplier: f32,
-  drift: f32,
   is_reversed: bool,
 }
 
@@ -34,7 +33,6 @@ impl Grain {
       phase_offset: (VOICES as f32).recip() * index as f32,
       delta: Delta::new(),
       time_multiplier: 1.,
-      drift: 0.,
       is_reversed: false,
     }
   }
@@ -44,7 +42,7 @@ impl Grain {
     grain_delay_line: &mut DelayLine,
     phasor: f32,
     freq: f32,
-    pitch: f32,
+    speed: f32,
     spray: f32,
     drift: f32,
     reverse: f32,
@@ -53,15 +51,10 @@ impl Grain {
     let phase = Self::wrap(phasor + self.phase_offset);
     let trigger = self.delta.process(phase).abs() > 0.5;
     if trigger {
-      self.set_grain_params(freq, pitch, spray, drift, reverse, pan);
+      self.set_grain_params(freq, speed, spray, drift, reverse, pan);
     }
 
-    let speed = 2_f32.powf((pitch + self.drift) / 12.);
-    let ramp_freq = if self.is_reversed {
-      (1. + speed) * self.freq
-    } else {
-      (1. - speed) * self.freq
-    };
+    let ramp_freq = self.get_ramp_freq(speed);
     let ramp = self
       .time_ramp
       .process(ramp_freq * self.time_multiplier.recip());
@@ -75,7 +68,7 @@ impl Grain {
   fn set_grain_params(
     &mut self,
     freq: f32,
-    pitch: f32,
+    speed: f32,
     spray: f32,
     drift: f32,
     reverse: f32,
@@ -85,21 +78,27 @@ impl Grain {
     self.time_ramp.start();
     self.start_position = fastrand::f32() * spray;
     self.pan = (fastrand::f32() * pan * 2. - pan) * 50.;
-    self.drift = fastrand::f32() * drift * 2. - drift;
     self.is_reversed = fastrand::f32() <= reverse;
-
     self.window_size = freq.recip() * 1000.;
-    self.set_time_multiplier(pitch);
+    self.set_time_multiplier(speed, drift);
   }
 
-  fn set_time_multiplier(&mut self, pitch: f32) {
-    let speed = 2_f32.powf((pitch + self.drift) / 12.);
-    let time_multiplier = if self.is_reversed {
+  fn get_ramp_freq(&self, speed: f32) -> f32 {
+    if self.is_reversed {
       (1. + speed) * self.freq
     } else {
       (1. - speed) * self.freq
-    } / self.freq;
-    self.time_multiplier = time_multiplier.abs();
+    }
+  }
+
+  fn get_drift(&mut self, drift: f32) -> f32 {
+    let random_pitch = fastrand::f32() * drift * 2. - drift;
+    2_f32.powf(random_pitch / 12.)
+  }
+
+  fn set_time_multiplier(&mut self, speed: f32, drift: f32) {
+    let drift = self.get_drift(drift);
+    self.time_multiplier = (self.get_ramp_freq(speed * drift) / self.freq).abs();
   }
 
   fn wrap(input: f32) -> f32 {

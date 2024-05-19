@@ -47,7 +47,7 @@ impl Plugin for DmGrainDelay {
   fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
     let spray = *ports.spray;
     let freq = *ports.frequency;
-    let pitch = *ports.pitch;
+    let pitch = 2_f32.powf(*ports.pitch / 12.);
     let drift = (*ports.drift * 0.01).fast_pow(2.);
     let reverse = *ports.reverse * 0.01;
     let time = *ports.time;

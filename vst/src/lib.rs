@@ -47,7 +47,7 @@ impl Plugin for DmGrainDelay {
   fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
     let spray = self.params.spray.get();
     let freq = self.params.frequency.get();
-    let speed = self.params.pitch.get();
+    let speed = 2_f32.powf(self.params.pitch.get() / 12.);
     let drift = self.params.drift.get().fast_pow(2.);
     let reverse = self.params.reverse.get();
     let time = self.params.time.get();
@@ -59,7 +59,7 @@ impl Plugin for DmGrainDelay {
     if !self.is_active {
       self
         .grain_delay
-        .initialize_params(pitch, filter, feedback, mix);
+        .initialize_params(speed, filter, feedback, mix);
       self.is_active = true;
     }
 
