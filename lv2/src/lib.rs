@@ -1,6 +1,6 @@
 extern crate grain_delay;
 extern crate lv2;
-use grain_delay::GrainDelay;
+use grain_delay::{FloatExt, GrainDelay};
 use lv2::prelude::*;
 
 #[derive(PortCollection)]
