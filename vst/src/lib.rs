@@ -13,6 +13,7 @@ use vst::{
 struct DmGrainDelay {
   params: Arc<GrainDelayParameters>,
   grain_delay: GrainDelay,
+  is_active: bool,
 }
 
 impl Plugin for DmGrainDelay {
@@ -20,6 +21,7 @@ impl Plugin for DmGrainDelay {
     Self {
       params: Arc::new(GrainDelayParameters::default()),
       grain_delay: GrainDelay::new(44100.),
+      is_active: false,
     }
   }
 
@@ -53,6 +55,13 @@ impl Plugin for DmGrainDelay {
     let filter = self.params.filter.get();
     let spread = self.params.spread.get();
     let mix = self.params.mix.get();
+
+    if !self.is_active {
+      self
+        .grain_delay
+        .initialize_params(pitch, filter, feedback, mix);
+      self.is_active = true;
+    }
 
     let (input_channels, mut output_channels) = buffer.split();
     let input = input_channels.get(0);

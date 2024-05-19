@@ -42,6 +42,13 @@ impl GrainDelay {
     }
   }
 
+  pub fn initialize_params(&mut self, pitch: f32, filter: f32, feedback: f32, mix: f32) {
+    self.smooth_pitch.initialize(pitch);
+    self.smooth_filter.initialize(filter);
+    self.smooth_feedback.initialize(feedback);
+    self.smooth_mix.initialize(mix);
+  }
+
   pub fn process(
     &mut self,
     input: f32,

@@ -13,10 +13,18 @@ fn reverb_bench(c: &mut Criterion) {
   let mut grain_delay = GrainDelay::new(44100.);
   let signal_stream = generate_signal_stream(44100);
 
+  let pitch = 13.;
+  let filter = 4000.;
+  let feedback = 0.8;
+  let mix = 0.8;
+  grain_delay.initialize_params(pitch, filter, feedback, mix);
+
   c.bench_function("grain_delay", |b| {
     b.iter(|| {
       for signal in &signal_stream {
-        grain_delay.process(*signal, 2., 7., 12., 0.2, 0.5, 200., 0.8, 4000., 0.5, 0.5);
+        grain_delay.process(
+          *signal, 2., 7., pitch, 0.2, 0.5, 200., feedback, filter, 0.5, mix,
+        );
       }
     })
   });

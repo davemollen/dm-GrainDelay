@@ -23,6 +23,7 @@ struct Ports {
 #[uri("https://github.com/davemollen/dm-GrainDelay")]
 struct DmGrainDelay {
   grain_delay: GrainDelay,
+  is_active: bool,
 }
 
 impl Plugin for DmGrainDelay {
@@ -37,6 +38,7 @@ impl Plugin for DmGrainDelay {
   fn new(_plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
     Some(Self {
       grain_delay: GrainDelay::new(_plugin_info.sample_rate() as f32),
+      is_active: false,
     })
   }
 
@@ -53,6 +55,13 @@ impl Plugin for DmGrainDelay {
     let filter = *ports.filter;
     let spread = *ports.spread * 0.01;
     let mix = *ports.mix * 0.01;
+
+    if !self.is_active {
+      self
+        .grain_delay
+        .initialize_params(pitch, filter, feedback, mix);
+      self.is_active = true;
+    }
 
     let output_channels = ports
       .output_left

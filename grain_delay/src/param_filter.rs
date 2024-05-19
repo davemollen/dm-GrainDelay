@@ -15,6 +15,10 @@ impl ParamFilter {
     }
   }
 
+  pub fn initialize(&mut self, value: f32) {
+    self.z = value;
+  }
+
   pub fn process(&mut self, input: f32) -> f32 {
     if input.is_equal_to(self.z) {
       input
