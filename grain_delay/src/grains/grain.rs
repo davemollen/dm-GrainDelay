@@ -89,17 +89,17 @@ impl Grain {
     self.is_reversed = fastrand::f32() <= reverse;
 
     self.window_size = freq.recip() * 1000.;
-    self.set_freq_and_window_size(pitch);
+    self.set_time_multiplier(pitch);
   }
 
-  fn set_freq_and_window_size(&mut self, pitch: f32) {
+  fn set_time_multiplier(&mut self, pitch: f32) {
     let speed = 2_f32.powf((pitch + self.drift) / 12.);
-    self.time_multiplier = (if self.is_reversed {
+    let time_multiplier = if self.is_reversed {
       (1. + speed) * self.freq
     } else {
       (1. - speed) * self.freq
-    } / self.freq)
-      .abs();
+    } / self.freq;
+    self.time_multiplier = time_multiplier.abs();
   }
 
   fn wrap(input: f32) -> f32 {
