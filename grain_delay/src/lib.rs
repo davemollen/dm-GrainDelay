@@ -9,7 +9,6 @@ mod mix;
 mod one_pole_filter_stereo;
 mod param_filter;
 mod variable_delay_line;
-pub use shared::float_ext::FloatExt;
 use {
   dc_block::DcBlock, grains::Grains, mix::Mix, one_pole_filter_stereo::OnePoleFilterStereo,
   param_filter::ParamFilter, shared::delay_line::Interpolation,

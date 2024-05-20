@@ -1,6 +1,6 @@
 extern crate grain_delay;
 extern crate lv2;
-use grain_delay::{FloatExt, GrainDelay};
+use grain_delay::GrainDelay;
 use lv2::prelude::*;
 
 #[derive(PortCollection)]
@@ -48,7 +48,8 @@ impl Plugin for DmGrainDelay {
     let spray = *ports.spray;
     let freq = *ports.frequency;
     let pitch = 2_f32.powf(*ports.pitch / 12.);
-    let drift = (*ports.drift * 0.01).fast_pow(2.);
+    let drift = *ports.drift * 0.01;
+    let drift = drift * drift;
     let reverse = *ports.reverse * 0.01;
     let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
