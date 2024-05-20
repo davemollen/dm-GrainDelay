@@ -1,6 +1,5 @@
 #[derive(Clone)]
 pub struct Ramp {
-  sample_rate: f32,
   x: f32,
   trigger: bool,
   is_active: bool,
@@ -10,7 +9,6 @@ pub struct Ramp {
 impl Ramp {
   pub fn new(sample_rate: f32) -> Self {
     Self {
-      sample_rate,
       x: 0.,
       trigger: false,
       is_active: false,
@@ -46,10 +44,6 @@ impl Ramp {
     }
 
     self.x
-  }
-
-  pub fn is_finished(&self) -> bool {
-    !self.is_active
   }
 }
 
@@ -110,30 +104,5 @@ mod tests {
     assert_approximately_eq(ramp.process(-1.), 0.9);
     ramp.start();
     assert_approximately_eq(ramp.process(1.), 0.);
-  }
-
-  #[test]
-  fn is_finished() {
-    let mut ramp = Ramp::new(10.);
-
-    // forwards
-    ramp.start();
-    for _ in 0..11 {
-      assert!(!ramp.is_finished());
-      ramp.process(1.);
-    }
-    assert!(ramp.is_finished());
-    ramp.process(-1.);
-    assert!(ramp.is_finished());
-
-    // backwards
-    ramp.start();
-    for _ in 0..11 {
-      assert!(!ramp.is_finished());
-      ramp.process(-1.);
-    }
-    assert!(ramp.is_finished());
-    ramp.process(1.);
-    assert!(ramp.is_finished());
   }
 }
