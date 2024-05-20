@@ -54,7 +54,7 @@ impl Grain {
       self.set_grain_params(freq, speed, spray, drift, reverse, pan);
     }
 
-    let ramp_freq = self.get_ramp_freq(speed);
+    let ramp_freq = self.get_speed_for_delay_line(speed) * self.freq;
     let ramp = self
       .time_ramp
       .process(ramp_freq * self.time_multiplier.recip());
@@ -83,11 +83,11 @@ impl Grain {
     self.set_time_multiplier(speed, drift);
   }
 
-  fn get_ramp_freq(&self, speed: f32) -> f32 {
+  fn get_speed_for_delay_line(&self, speed: f32) -> f32 {
     if self.is_reversed {
-      (1. + speed) * self.freq
+      1. + speed
     } else {
-      (1. - speed) * self.freq
+      1. - speed
     }
   }
 
@@ -98,7 +98,7 @@ impl Grain {
 
   fn set_time_multiplier(&mut self, speed: f32, drift: f32) {
     let drift = self.get_drift(drift);
-    self.time_multiplier = (self.get_ramp_freq(speed * drift) / self.freq).abs();
+    self.time_multiplier = self.get_speed_for_delay_line(speed * drift).abs();
   }
 
   fn wrap(input: f32) -> f32 {
