@@ -102,7 +102,7 @@ impl Grain {
   }
 
   fn wrap(input: f32) -> f32 {
-    if input > 1. {
+    if input >= 1. {
       input - 1.
     } else {
       input
