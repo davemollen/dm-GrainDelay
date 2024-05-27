@@ -5,8 +5,9 @@ pub struct Mix;
 
 impl Mix {
   pub fn process(dry: f32, wet: (f32, f32), mix: f32) -> (f32, f32) {
-    let dry_gain = (mix * FRAC_PI_2).fast_cos();
-    let wet_gain = (mix * FRAC_PI_2).fast_sin();
+    let fraction = mix * FRAC_PI_2;
+    let dry_gain = fraction.fast_cos();
+    let wet_gain = fraction.fast_sin();
     let dry_out = dry * dry_gain;
     (dry_out + wet.0 * wet_gain, dry_out + wet.1 * wet_gain)
   }
