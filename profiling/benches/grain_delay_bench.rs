@@ -9,7 +9,7 @@ fn generate_signal_stream(length: usize) -> Vec<f32> {
   (0..length).map(|_| generate_signal()).collect()
 }
 
-fn reverb_bench(c: &mut Criterion) {
+fn grain_delay_bench(c: &mut Criterion) {
   let mut grain_delay = GrainDelay::new(44100.);
   let signal_stream = generate_signal_stream(44100);
 
@@ -30,5 +30,5 @@ fn reverb_bench(c: &mut Criterion) {
   });
 }
 
-criterion_group!(benches, reverb_bench);
+criterion_group!(benches, grain_delay_bench);
 criterion_main!(benches);
