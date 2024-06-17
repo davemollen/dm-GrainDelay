@@ -54,11 +54,7 @@ impl Grain {
       self.set_grain_params(freq, speed, spray, drift, reverse, pan);
     }
 
-    let ramp_freq = self.get_speed_for_delay_line(speed) * self.freq;
-    let ramp = self
-      .time_ramp
-      .process(ramp_freq * self.time_multiplier.recip());
-    let time = ramp * self.time_multiplier * self.window_size;
+    let (ramp, time) = self.get_ramp_and_time(speed);
     let window = (ramp * PI).fast_sin() * (phase * PI).fast_sin();
     let grains_out =
       grain_delay_line.read(time + self.start_position, Interpolation::Linear) * window;
@@ -101,9 +97,27 @@ impl Grain {
     self.time_multiplier = self.get_speed_for_delay_line(speed * drift).abs();
   }
 
+  fn get_ramp_and_time(&mut self, speed: f32) -> (f32, f32) {
+    if self.time_multiplier == 0. {
+      let ramp = self.time_ramp.process(self.freq);
+      (
+        ramp,
+        Self::wrap(ramp * self.get_speed_for_delay_line(speed)) * self.window_size,
+      )
+    } else {
+      let ramp_freq = self.get_speed_for_delay_line(speed) * self.freq;
+      let ramp = self
+        .time_ramp
+        .process(ramp_freq * self.time_multiplier.recip());
+      (ramp, ramp * self.time_multiplier * self.window_size)
+    }
+  }
+
   fn wrap(input: f32) -> f32 {
     if input >= 1. {
       input - 1.
+    } else if input < 0. {
+      input + 1.
     } else {
       input
     }
