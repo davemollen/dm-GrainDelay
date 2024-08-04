@@ -45,25 +45,28 @@ impl DelayLine {
   }
 
   fn step_interp(&self, time: f32) -> f32 {
-    let read_pointer = (self.write_pointer + self.buffer.len()) as f32 - (self.mstosamps(time) - 0.5).max(1.);
+    let read_pointer =
+      (self.write_pointer + self.buffer.len()) as f32 - (self.mstosamps(time) - 0.5).max(1.);
     let index = read_pointer.trunc() as usize;
 
     self.buffer[index & self.wrap]
   }
 
   fn linear_interp(&self, time: f32) -> f32 {
-    let read_pointer = (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(1.);
+    let read_pointer =
+      (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(1.);
     let rounded_read_pointer = read_pointer.trunc();
     let mix = read_pointer - rounded_read_pointer;
     let index = rounded_read_pointer as usize;
 
     let x = self.buffer[index & self.wrap];
     let y = self.buffer[index + 1 & self.wrap];
-    x * (1. - mix) + y * mix
+    x + (y - x) * mix
   }
 
   fn cosine_interp(&self, time: f32) -> f32 {
-    let read_pointer = (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(1.);
+    let read_pointer =
+      (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(1.);
     let rounded_read_pointer = read_pointer.trunc();
     let mix = read_pointer - rounded_read_pointer;
     let index = rounded_read_pointer as usize;
@@ -71,11 +74,12 @@ impl DelayLine {
     let cosine_mix = (1. - (mix * PI).cos()) / 2.;
     let x = self.buffer[index & self.wrap];
     let y = self.buffer[index + 1 & self.wrap];
-    x * (1. - cosine_mix) + y * cosine_mix
+    x + (y - x) * cosine_mix
   }
 
   fn cubic_interp(&self, time: f32) -> f32 {
-    let read_pointer = (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(2.);
+    let read_pointer =
+      (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(2.);
     let rounded_read_pointer = read_pointer.trunc();
     let mix = read_pointer - rounded_read_pointer;
     let index = rounded_read_pointer as usize;
@@ -98,7 +102,8 @@ impl DelayLine {
   }
 
   fn spline_interp(&self, time: f32) -> f32 {
-    let read_pointer = (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(2.);
+    let read_pointer =
+      (self.write_pointer + self.buffer.len()) as f32 - self.mstosamps(time).max(2.);
     let rounded_read_pointer = read_pointer.trunc();
     let mix = read_pointer - rounded_read_pointer;
     let index = rounded_read_pointer as usize;

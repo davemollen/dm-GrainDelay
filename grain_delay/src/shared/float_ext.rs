@@ -33,7 +33,7 @@ impl FloatExt for f32 {
   }
 
   fn mix(self, right: f32, factor: f32) -> Self {
-    self * (1. - factor) + right * factor
+    self + (right - self) * factor
   }
 
   /// This is an atan approximation
