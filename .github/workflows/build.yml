@@ -1,0 +1,60 @@
+name: Build and release
+
+on:
+  release:
+    types: [created]
+
+env:
+  plugin_name: dm-GrainDelay
+  mod_package_name: dm-graindelay
+
+jobs:
+  package-mod-plugin:
+    name: Package mod plugins
+    strategy:
+      matrix:
+        platform: [moddwarf-new]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Docker image from GHCR
+        run: docker pull ghcr.io/davemollen/${{ matrix.platform }}-plugin-builder:latest
+
+      - name: Run Docker container
+        run: docker run -t -d --name mpb ghcr.io/davemollen/${{ matrix.platform }}-plugin-builder:latest
+
+      - name: Update commit sha in build script
+        run: sed -i 's/<SHA>/${{ github.sha }}/' .github/workflows/$mod_package_name.mk
+
+      - name: Add local build script to Docker container
+        run: |
+          docker exec -w /root/mod-plugin-builder/plugins/package mpb mkdir -p $mod_package_name
+          docker cp .github/workflows/$mod_package_name.mk mpb:/root/mod-plugin-builder/plugins/package/$mod_package_name
+
+      - name: Build for modaudio
+        run: docker exec mpb ./build ${{ matrix.platform }} $mod_package_name
+
+      - name: Determine build archive name
+        run: echo "ARCHIVE_NAME=$plugin_name-${{ matrix.platform }}" >> "$GITHUB_ENV"
+
+      - name: Zip files
+        run: |
+          mkdir -p $ARCHIVE_NAME
+          docker cp mpb:/root/mod-workdir/${{ matrix.platform }}/plugins/$plugin_name.lv2 $ARCHIVE_NAME
+          cp .github/workflows/readme-Mod.txt "$ARCHIVE_NAME/README.txt"
+          tar -cf $ARCHIVE_NAME.zip $ARCHIVE_NAME
+
+      - name: Add zip to release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{github.ref_name}}
+          files: ${{ env.ARCHIVE_NAME }}.zip

@@ -1,30 +1,30 @@
 ## dm-GrainDelay
 
 A granular delay effect written in Rust.
-The effect is available for [Mod devices](https://moddevices.com/) and you can compile it to a VST plugin.
-This plugin has been written primarily to run on [Mod devices](https://moddevices.com/). It's a mono to stereo plugin.
+
+The effect can be compiled to a [MOD audio](https://mod.audio/) plugin.
 
 ## Table of contents:
 
-- [Mod devices installation](#Mod-devices-installation)
-- [VST installation](#VST-installation)
+- [MOD installation](#MOD-installation)
+- [VST2](#VST2)
+- [Copyright notices](#Copyright-notices)
 
-## Mod devices installation
-Install it through the Mod Plugin store. It's available as a beta plugin.
+## MOD installation
 
-## VST installation
+This plugin is not yet in the MOD Audio plugin store.
+However, you can download the latest MOD Dwarf build from the [releases page](https://github.com/davemollen/dm-GrainDelay/releases).
 
-To build the plugin you need to install Rust first.
+If you want to build the plugin on your own machine check out the [mod-plugin-builder repository](https://github.com/moddevices/mod-plugin-builder) for instructions.
 
-Windows:
+## VST2
 
-1. Go to the vst folder and run `cargo build --release`
-2. Copy the plugin file in /target/release to your vst plugin folder
+Legacy code for a VST2 plugin is also in this repository. Since VST2 has been deprecated automated builds for VST2 have been excluded.
 
-Intel Mac:
+## Copyright notices
 
-- Run `./scripts/build-vst-for-mac.sh`.
+VST is a trademark of Steinberg Media Technologies GmbH, registered in Europe and other countries.
 
-M1 Mac:
+All other trademarks are the property of their respective holders.
 
-- Run `./scripts/build-vst-for-mac-m1.sh`.
+<img src="https://steinbergmedia.github.io/vst3_dev_portal/resources/licensing_6.png" width="60" height="auto" alt="VST trademark">

@@ -19,7 +19,7 @@
 	mod:brand "DM" ;
 	mod:label "Grain Delay" ;
 	rdfs:comment """
-A granular delay effect written in Rust.
+A granular delay effect.
 """ ;
 	lv2:requiredFeature lv2:inPlaceBroken ;
 	lv2:optionalFeature lv2:hardRTCapable ;
