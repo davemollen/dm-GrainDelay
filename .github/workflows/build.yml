@@ -51,7 +51,7 @@ jobs:
           mkdir -p $ARCHIVE_NAME
           docker cp mpb:/root/mod-workdir/${{ matrix.platform }}/plugins/$plugin_name.lv2 $ARCHIVE_NAME
           cp .github/workflows/readme-Mod.txt "$ARCHIVE_NAME/README.txt"
-          tar -cf $ARCHIVE_NAME.zip $ARCHIVE_NAME
+          zip -r $ARCHIVE_NAME.zip $ARCHIVE_NAME
 
       - name: Add zip to release
         uses: softprops/action-gh-release@v2
