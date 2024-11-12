@@ -7,7 +7,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-lv2 = { version = "0.6.0", features = ["minimal_plugin"] }
+lv2 = { git = "https://github.com/davemollen/rust-lv2.git", features = [
+    "minimal_plugin",
+] }
 grain_delay = { path = "../grain_delay" }
 
 [lib]
