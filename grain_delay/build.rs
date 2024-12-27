@@ -12,7 +12,8 @@ fn get_max_grain_delay_time() -> f32 {
 fn main() {
   let max_grain_delay_time = get_max_grain_delay_time();
 
-  let constants_content = format!("pub const MAX_GRAIN_DELAY_TIME: f32 = {max_grain_delay_time:.1};");
+  let constants_content =
+    format!("pub const MAX_GRAIN_DELAY_TIME: f32 = {max_grain_delay_time:.1};");
 
   let out_dir = env::var("OUT_DIR").unwrap();
   let dest_path = Path::new(&out_dir).join("constants.rs");

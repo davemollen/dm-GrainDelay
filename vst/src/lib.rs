@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate vst;
 mod grain_delay_parameters;
-use grain_delay::GrainDelay;
+use grain_delay::{GrainDelay, Params as ProcessedParams};
 use grain_delay_parameters::GrainDelayParameters;
 use std::sync::Arc;
 use vst::{
@@ -13,7 +13,7 @@ use vst::{
 struct DmGrainDelay {
   params: Arc<GrainDelayParameters>,
   grain_delay: GrainDelay,
-  is_active: bool,
+  processed_params: ProcessedParams,
 }
 
 impl Plugin for DmGrainDelay {
@@ -21,7 +21,7 @@ impl Plugin for DmGrainDelay {
     Self {
       params: Arc::new(GrainDelayParameters::default()),
       grain_delay: GrainDelay::new(44100.),
-      is_active: false,
+      processed_params: ProcessedParams::new(44100.),
     }
   }
 
@@ -45,24 +45,18 @@ impl Plugin for DmGrainDelay {
   }
 
   fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
-    let spray = self.params.spray.get();
-    let freq = self.params.frequency.get();
-    let speed = 2_f32.powf(self.params.pitch.get() / 12.);
-    let drift = self.params.drift.get();
-    let drift = drift * drift;
-    let reverse = self.params.reverse.get();
-    let time = self.params.time.get();
-    let feedback = self.params.feedback.get();
-    let filter = self.params.filter.get();
-    let spread = self.params.spread.get();
-    let mix = self.params.mix.get();
-
-    if !self.is_active {
-      self
-        .grain_delay
-        .initialize_params(speed, filter, feedback, mix);
-      self.is_active = true;
-    }
+    self.processed_params.set(
+      self.params.spray.get(),
+      self.params.frequency.get(),
+      self.params.pitch.get(),
+      self.params.drift.get(),
+      self.params.reverse.get(),
+      self.params.time.get(),
+      self.params.feedback.get(),
+      self.params.filter.get(),
+      self.params.spread.get(),
+      self.params.mix.get(),
+    );
 
     let (input_channels, mut output_channels) = buffer.split();
     let input = input_channels.get(0);
@@ -71,11 +65,7 @@ impl Plugin for DmGrainDelay {
       .iter_mut()
       .zip(output_channels.get_mut(1).iter_mut());
     for (input, (output_left, output_right)) in input.iter().zip(zipped_output_channels) {
-      let (grain_delay_left, grain_delay_right) = self.grain_delay.process(
-        *input, spray, freq, speed, drift, reverse, time, feedback, filter, spread, mix,
-      );
-      *output_left = grain_delay_left;
-      *output_right = grain_delay_right;
+      (*output_left, *output_right) = self.grain_delay.process(*input, &mut self.processed_params);
     }
   }
 

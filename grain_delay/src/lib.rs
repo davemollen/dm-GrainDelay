@@ -7,12 +7,12 @@ mod shared {
 mod grains;
 mod mix;
 mod one_pole_filter_stereo;
-mod param_filter;
+mod params;
 mod variable_delay_line;
+pub use params::Params;
 use {
   dc_block::DcBlock, grains::Grains, mix::Mix, one_pole_filter_stereo::OnePoleFilterStereo,
-  param_filter::ParamFilter, shared::delay_line::Interpolation,
-  variable_delay_line::VariableDelayLine,
+  params::Smoother, shared::delay_line::Interpolation, variable_delay_line::VariableDelayLine,
 };
 
 pub struct GrainDelay {
@@ -20,10 +20,6 @@ pub struct GrainDelay {
   low_pass_filter: OnePoleFilterStereo,
   grains: Grains,
   dc_block: DcBlock,
-  smooth_speed: ParamFilter,
-  smooth_filter: ParamFilter,
-  smooth_feedback: ParamFilter,
-  smooth_mix: ParamFilter,
 }
 
 impl GrainDelay {
@@ -33,38 +29,23 @@ impl GrainDelay {
       low_pass_filter: OnePoleFilterStereo::new(sample_rate),
       grains: Grains::new(sample_rate),
       dc_block: DcBlock::new(sample_rate),
-      smooth_speed: ParamFilter::new(sample_rate, 12.),
-      smooth_filter: ParamFilter::new(sample_rate, 12.),
-      smooth_feedback: ParamFilter::new(sample_rate, 12.),
-      smooth_mix: ParamFilter::new(sample_rate, 12.),
     }
   }
 
-  pub fn initialize_params(&mut self, pitch: f32, filter: f32, feedback: f32, mix: f32) {
-    self.smooth_speed.initialize(pitch);
-    self.smooth_filter.initialize(filter);
-    self.smooth_feedback.initialize(feedback);
-    self.smooth_mix.initialize(mix);
-  }
-
-  pub fn process(
-    &mut self,
-    input: f32,
-    spray: f32,
-    freq: f32,
-    speed: f32,
-    drift: f32,
-    reverse: f32,
-    time: f32,
-    feedback: f32,
-    filter: f32,
-    spread: f32,
-    mix: f32,
-  ) -> (f32, f32) {
-    let speed = self.smooth_speed.process(speed);
-    let filter = self.smooth_filter.process(filter);
-    let feedback = self.smooth_feedback.process(feedback);
-    let mix = self.smooth_mix.process(mix);
+  pub fn process(&mut self, input: f32, params: &mut Params) -> (f32, f32) {
+    let Params {
+      spray,
+      freq,
+      drift,
+      reverse,
+      time,
+      spread,
+      ..
+    } = *params;
+    let speed = params.speed.next();
+    let feedback = params.feedback.next();
+    let filter = params.filter.next();
+    let mix = params.mix.next();
 
     let delay_out = self.variable_delay_line.read(time, Interpolation::Step);
     let grain_delay_out = self

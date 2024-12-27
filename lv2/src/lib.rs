@@ -1,6 +1,6 @@
 extern crate grain_delay;
 extern crate lv2;
-use grain_delay::GrainDelay;
+use grain_delay::{GrainDelay, Params};
 use lv2::prelude::*;
 
 #[derive(PortCollection)]
@@ -23,7 +23,7 @@ struct Ports {
 #[uri("https://github.com/davemollen/dm-GrainDelay")]
 struct DmGrainDelay {
   grain_delay: GrainDelay,
-  is_active: bool,
+  params: Params,
 }
 
 impl Plugin for DmGrainDelay {
@@ -36,44 +36,36 @@ impl Plugin for DmGrainDelay {
 
   // Create a new instance of the plugin; Trivial in this case.
   fn new(_plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
+    let sample_rate = _plugin_info.sample_rate() as f32;
+
     Some(Self {
-      grain_delay: GrainDelay::new(_plugin_info.sample_rate() as f32),
-      is_active: false,
+      grain_delay: GrainDelay::new(sample_rate),
+      params: Params::new(sample_rate),
     })
   }
 
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
   fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
-    let spray = *ports.spray;
-    let freq = *ports.frequency;
-    let pitch = 2_f32.powf(*ports.pitch / 12.);
-    let drift = *ports.drift * 0.01;
-    let drift = drift * drift;
-    let reverse = *ports.reverse * 0.01;
-    let time = *ports.time;
-    let feedback = *ports.feedback * 0.01;
-    let filter = *ports.filter;
-    let spread = *ports.spread * 0.01;
-    let mix = *ports.mix * 0.01;
-
-    if !self.is_active {
-      self
-        .grain_delay
-        .initialize_params(pitch, filter, feedback, mix);
-      self.is_active = true;
-    }
+    self.params.set(
+      *ports.spray,
+      *ports.frequency,
+      *ports.pitch,
+      *ports.drift * 0.01,
+      *ports.reverse * 0.01,
+      *ports.time,
+      *ports.feedback * 0.01,
+      *ports.filter,
+      *ports.spread * 0.01,
+      *ports.mix * 0.01,
+    );
 
     let output_channels = ports
       .output_left
       .iter_mut()
       .zip(ports.output_right.iter_mut());
     for (input, (out_left, out_right)) in ports.input.iter().zip(output_channels) {
-      let (grain_delay_left, grain_delay_right) = self.grain_delay.process(
-        *input, spray, freq, pitch, drift, reverse, time, feedback, filter, spread, mix,
-      );
-      *out_left = grain_delay_left;
-      *out_right = grain_delay_right;
+      (*out_left, *out_right) = self.grain_delay.process(*input, &mut self.params);
     }
   }
 }
