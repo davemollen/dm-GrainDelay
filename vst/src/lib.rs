@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate vst;
 mod grain_delay_parameters;
-use grain_delay::{GrainDelay, Params as ProcessedParams};
+use grain_delay::{GrainDelay, Params as ProcessParams};
 use grain_delay_parameters::GrainDelayParameters;
 use std::sync::Arc;
 use vst::{
@@ -13,7 +13,7 @@ use vst::{
 struct DmGrainDelay {
   params: Arc<GrainDelayParameters>,
   grain_delay: GrainDelay,
-  processed_params: ProcessedParams,
+  process_params: ProcessParams,
 }
 
 impl Plugin for DmGrainDelay {
@@ -21,7 +21,7 @@ impl Plugin for DmGrainDelay {
     Self {
       params: Arc::new(GrainDelayParameters::default()),
       grain_delay: GrainDelay::new(44100.),
-      processed_params: ProcessedParams::new(44100.),
+      process_params: ProcessParams::new(44100.),
     }
   }
 
@@ -45,7 +45,7 @@ impl Plugin for DmGrainDelay {
   }
 
   fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
-    self.processed_params.set(
+    self.process_params.set(
       self.params.spray.get(),
       self.params.frequency.get(),
       self.params.pitch.get(),
@@ -65,7 +65,7 @@ impl Plugin for DmGrainDelay {
       .iter_mut()
       .zip(output_channels.get_mut(1).iter_mut());
     for (input, (output_left, output_right)) in input.iter().zip(zipped_output_channels) {
-      (*output_left, *output_right) = self.grain_delay.process(*input, &mut self.processed_params);
+      (*output_left, *output_right) = self.grain_delay.process(*input, &mut self.process_params);
     }
   }
 

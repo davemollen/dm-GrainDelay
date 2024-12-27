@@ -13,6 +13,7 @@ pub struct Params {
   pub filter: LinearSmooth,
   pub spread: f32,
   pub mix: LinearSmooth,
+  is_initialized: bool,
 }
 
 impl Params {
@@ -20,14 +21,15 @@ impl Params {
     Self {
       spray: 0.,
       freq: 0.,
-      speed: LinearSmooth::new(12., sample_rate),
+      speed: LinearSmooth::new(sample_rate, 12.),
       drift: 0.,
       reverse: 0.,
       time: 0.,
-      feedback: LinearSmooth::new(12., sample_rate),
-      filter: LinearSmooth::new(12., sample_rate),
+      feedback: LinearSmooth::new(sample_rate, 12.),
+      filter: LinearSmooth::new(sample_rate, 12.),
       spread: 0.,
-      mix: LinearSmooth::new(12., sample_rate),
+      mix: LinearSmooth::new(sample_rate, 12.),
+      is_initialized: false,
     }
   }
 
@@ -46,13 +48,23 @@ impl Params {
   ) {
     self.spray = spray;
     self.freq = freq;
-    self.speed.set_target(2_f32.powf(pitch / 12.));
     self.drift = drift * drift;
     self.reverse = reverse;
     self.time = time;
-    self.feedback.set_target(feedback);
-    self.filter.set_target(filter);
     self.spread = spread;
-    self.mix.set_target(mix);
+
+    let speed = 2_f32.powf(pitch / 12.);
+    if self.is_initialized {
+      self.speed.set_target(speed);
+      self.feedback.set_target(feedback);
+      self.filter.set_target(filter);
+      self.mix.set_target(mix);
+    } else {
+      self.speed.reset(speed);
+      self.feedback.reset(feedback);
+      self.filter.reset(filter);
+      self.mix.reset(mix);
+      self.is_initialized = true;
+    }
   }
 }
