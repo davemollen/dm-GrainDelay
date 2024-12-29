@@ -1,7 +1,7 @@
 use std::{env, fs, path::Path};
 
 const MAX_PITCH: f32 = 24.;
-const MAX_DRIFT: f32 = 1.;
+const MAX_DRIFT: f32 = 2.;
 const MIN_FREQUENCY: f32 = 1.;
 const MAX_SPRAY: f32 = 0.5;
 
@@ -10,10 +10,12 @@ fn get_max_grain_delay_time() -> f32 {
 }
 
 fn main() {
-  let max_grain_delay_time = get_max_grain_delay_time();
-
-  let constants_content =
-    format!("pub const MAX_GRAIN_DELAY_TIME: f32 = {max_grain_delay_time:.1};");
+  let max_grain_delay_time = format!(
+    "pub const MAX_GRAIN_DELAY_TIME: f32 = {:.1};",
+    get_max_grain_delay_time()
+  );
+  let max_drift = format!("\npub const MAX_DRIFT: f32 = {MAX_DRIFT:.1};");
+  let constants_content = format!("{max_grain_delay_time}{max_drift}");
 
   let out_dir = env::var("OUT_DIR").unwrap();
   let dest_path = Path::new(&out_dir).join("constants.rs");

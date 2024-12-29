@@ -1,6 +1,6 @@
 mod smooth;
 use smooth::LinearSmooth;
-pub use smooth::Smoother;
+pub use {crate::MAX_DRIFT, smooth::Smoother};
 
 pub struct Params {
   pub spray: f32,
@@ -48,7 +48,7 @@ impl Params {
   ) {
     self.spray = spray;
     self.freq = freq;
-    self.drift = drift * drift;
+    self.drift = drift * drift * MAX_DRIFT;
     self.reverse = reverse;
     self.time = time;
     self.spread = spread;
