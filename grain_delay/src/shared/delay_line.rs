@@ -29,7 +29,7 @@ impl DelayLine {
     }
   }
 
-  pub fn read(&mut self, time: f32, interp: Interpolation) -> f32 {
+  pub fn read(&self, time: f32, interp: Interpolation) -> f32 {
     match interp {
       Interpolation::Step => self.step_interp(time),
       Interpolation::Linear => self.linear_interp(time),

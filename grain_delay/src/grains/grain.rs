@@ -39,7 +39,7 @@ impl Grain {
 
   pub fn process(
     &mut self,
-    grain_delay_line: &mut DelayLine,
+    grain_delay_line: &DelayLine,
     phasor: f32,
     freq: f32,
     speed: f32,

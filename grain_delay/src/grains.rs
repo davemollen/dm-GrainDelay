@@ -36,13 +36,12 @@ impl Grains {
   ) -> (f32, f32) {
     let phasor = self.phasor.process(freq);
 
-    let grain_delay_line = &mut self.grain_delay_line;
     let grains_out = self
       .grains
       .iter_mut()
       .map(|grain| {
         grain.process(
-          grain_delay_line,
+          &self.grain_delay_line,
           phasor,
           freq,
           speed,
