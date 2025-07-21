@@ -25,12 +25,14 @@ dependencies = [
 
 [[package]]
 name = "lv2"
-version = "0.6.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+version = "0.6.1"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "lv2-atom",
  "lv2-core",
+ "lv2-log",
  "lv2-midi",
+ "lv2-patch",
  "lv2-units",
  "lv2-urid",
  "urid",
@@ -39,7 +41,7 @@ dependencies = [
 [[package]]
 name = "lv2-atom"
 version = "2.0.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "lv2-core",
  "lv2-sys",
@@ -50,7 +52,7 @@ dependencies = [
 [[package]]
 name = "lv2-core"
 version = "3.0.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "lv2-core-derive",
  "lv2-sys",
@@ -60,7 +62,7 @@ dependencies = [
 [[package]]
 name = "lv2-core-derive"
 version = "2.1.1"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -68,9 +70,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "lv2-log"
+version = "0.1.0"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+dependencies = [
+ "lv2-core",
+ "lv2-sys",
+ "urid",
+]
+
+[[package]]
 name = "lv2-midi"
 version = "1.2.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "lv2-atom",
  "lv2-sys",
@@ -79,14 +91,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "lv2-patch"
+version = "0.1.0"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+dependencies = [
+ "lv2-sys",
+ "urid",
+]
+
+[[package]]
 name = "lv2-sys"
 version = "2.0.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 
 [[package]]
 name = "lv2-units"
 version = "0.1.3"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "lv2-sys",
  "urid",
@@ -95,7 +116,7 @@ dependencies = [
 [[package]]
 name = "lv2-urid"
 version = "2.1.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "lv2-core",
  "lv2-sys",
@@ -140,7 +161,7 @@ checksum = "adb9e6ca4f869e1180728b7950e35922a7fc6397f7b641499e8f3ef06e50dc83"
 [[package]]
 name = "urid"
 version = "0.1.0"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "urid-derive",
 ]
@@ -148,7 +169,7 @@ dependencies = [
 [[package]]
 name = "urid-derive"
 version = "0.1.1"
-source = "git+https://github.com/davemollen/rust-lv2.git#849cf0983fd8babfe64c55422d3b1905f281b82c"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
 dependencies = [
  "proc-macro2",
  "quote",

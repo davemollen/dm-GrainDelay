@@ -5,19 +5,19 @@ use lv2::prelude::*;
 
 #[derive(PortCollection)]
 struct Ports {
-  spray: InputPort<Control>,
-  frequency: InputPort<Control>,
-  pitch: InputPort<Control>,
-  drift: InputPort<Control>,
-  reverse: InputPort<Control>,
-  time: InputPort<Control>,
-  feedback: InputPort<Control>,
-  filter: InputPort<Control>,
-  spread: InputPort<Control>,
-  mix: InputPort<Control>,
-  input: InputPort<Audio>,
-  output_left: OutputPort<Audio>,
-  output_right: OutputPort<Audio>,
+  spray: InputPort<InPlaceControl>,
+  frequency: InputPort<InPlaceControl>,
+  pitch: InputPort<InPlaceControl>,
+  drift: InputPort<InPlaceControl>,
+  reverse: InputPort<InPlaceControl>,
+  time: InputPort<InPlaceControl>,
+  feedback: InputPort<InPlaceControl>,
+  filter: InputPort<InPlaceControl>,
+  spread: InputPort<InPlaceControl>,
+  mix: InputPort<InPlaceControl>,
+  input: InputPort<InPlaceAudio>,
+  output_left: OutputPort<InPlaceAudio>,
+  output_right: OutputPort<InPlaceAudio>,
 }
 
 #[uri("https://github.com/davemollen/dm-GrainDelay")]
@@ -48,24 +48,23 @@ impl Plugin for DmGrainDelay {
   // iterates over.
   fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
     self.params.set(
-      *ports.spray,
-      *ports.frequency,
-      *ports.pitch,
-      *ports.drift * 0.01,
-      *ports.reverse * 0.01,
-      *ports.time,
-      *ports.feedback * 0.01,
-      *ports.filter,
-      *ports.spread * 0.01,
-      *ports.mix * 0.01,
+      ports.spray.get(),
+      ports.frequency.get(),
+      ports.pitch.get(),
+      ports.drift.get() * 0.01,
+      ports.reverse.get() * 0.01,
+      ports.time.get(),
+      ports.feedback.get() * 0.01,
+      ports.filter.get(),
+      ports.spread.get() * 0.01,
+      ports.mix.get() * 0.01,
     );
 
-    let output_channels = ports
-      .output_left
-      .iter_mut()
-      .zip(ports.output_right.iter_mut());
-    for (input, (out_left, out_right)) in ports.input.iter().zip(output_channels) {
-      (*out_left, *out_right) = self.grain_delay.process(*input, &mut self.params);
+    let output_channels = ports.output_left.iter().zip(ports.output_right.iter());
+    for (input, (output_left, output_right)) in ports.input.iter().zip(output_channels) {
+      let output = self.grain_delay.process(input.get(), &mut self.params);
+      output_left.set(output.0);
+      output_right.set(output.1);
     }
   }
 }

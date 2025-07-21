@@ -21,7 +21,6 @@
 	rdfs:comment """
 A granular delay effect.
 """ ;
-	lv2:requiredFeature lv2:inPlaceBroken ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:port [
 		a lv2:InputPort, lv2:ControlPort ;
