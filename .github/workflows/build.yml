@@ -4,6 +4,10 @@ on:
   release:
     types: [created]
 
+defaults:
+  run:
+    shell: bash
+
 env:
   binary_name: dm_graindelay
   plugin_name: dm-GrainDelay
