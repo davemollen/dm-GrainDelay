@@ -5,6 +5,7 @@ on:
     types: [created]
 
 env:
+  binary_name: dm_graindelay
   plugin_name: dm-GrainDelay
   mod_package_name: dm-graindelay
 
@@ -52,6 +53,73 @@ jobs:
           docker cp mpb:/root/mod-workdir/${{ matrix.platform }}/plugins/$plugin_name.lv2 $ARCHIVE_NAME
           cp .github/workflows/readme-Mod.txt "$ARCHIVE_NAME/README.txt"
           zip -r $ARCHIVE_NAME.zip $ARCHIVE_NAME
+
+      - name: Add zip to release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{github.ref_name}}
+          files: ${{ env.ARCHIVE_NAME }}.zip
+
+  package-mod-desktop-plugin:
+    name: Package mod desktop plugins
+    strategy:
+      matrix:
+        include:
+          - { name: ubuntu, os: ubuntu-latest, cross-target: "" }
+          - { name: macos, os: macos-latest, cross-target: x86_64-apple-darwin }
+          - { name: windows, os: windows-latest, cross-target: "" }
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        if: startsWith(matrix.os, 'windows')
+        run: choco install zip -y
+
+      - name: Set up Rust toolchain
+        # Needed for SIMD
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          # The macOS x86_64 build is done from an AArch64 macOS CI runner, so
+          # it needs to be cross compiled
+          targets: ${{ matrix.cross-target }}
+
+      - name: Build lv2 plugin
+        working-directory: ./lv2
+        run: |
+          runner_name=${{ matrix.name }}
+          if [[ $runner_name = 'macos' ]]; then
+            MACOSX_DEPLOYMENT_TARGET=10.15 cargo build --release --target x86_64-apple-darwin
+            MACOSX_DEPLOYMENT_TARGET=10.15 cargo build --release --target aarch64-apple-darwin
+            lipo -create target/x86_64-apple-darwin/release/lib$binary_name.dylib target/aarch64-apple-darwin/release/lib$binary_name.dylib -output target/release/lib$binary_name.dylib
+            file target/release/lib$binary_name.dylib
+            perl -pi -e "s|lib$binary_name.so|lib$binary_name.dylib|" $plugin_name.lv2/manifest.ttl
+            mv target/release/lib$binary_name.dylib $plugin_name.lv2
+          elif [[ $runner_name = 'windows' ]]; then
+            cargo build --release
+            perl -pi -e "s|lib$binary_name.so|$binary_name.dll|" $plugin_name.lv2/manifest.ttl
+            mv target/release/$binary_name.dll $plugin_name.lv2
+          else
+            cargo build --release
+            mv target/release/lib$binary_name.so $plugin_name.lv2
+          fi
+
+      - name: Determine build archive name
+        run: |
+          # Windows (usually) doesn't like colons in file names
+          echo "ARCHIVE_NAME=$plugin_name-moddesktop-lv2-${{ matrix.name }}" >> "$GITHUB_ENV"
+
+      - name: Move all packaged plugin into a directory
+        run: |
+          mkdir -p $ARCHIVE_NAME
+          mv ./lv2/$plugin_name.lv2 $ARCHIVE_NAME
+
+      - name: Add an OS-specific readme file with installation instructions
+        run: cp ".github/workflows/readme-ModDesktop.txt" "$ARCHIVE_NAME/README.txt"
+
+      - name: Zip files
+        run: zip -r $ARCHIVE_NAME.zip $ARCHIVE_NAME
 
       - name: Add zip to release
         uses: softprops/action-gh-release@v2

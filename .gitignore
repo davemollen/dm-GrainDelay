@@ -1,3 +1,6 @@
 target
-lv2/out
 .DS_Store
+*.svg
+*libdm_graindelay.so
+*libdm_graindelay.dylib
+*libdm_graindelay.dll
