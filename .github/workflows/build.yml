@@ -77,10 +77,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        if: startsWith(matrix.os, 'windows')
-        run: choco install zip -y
-
       - name: Set up Rust toolchain
         # Needed for SIMD
         uses: dtolnay/rust-toolchain@nightly
@@ -123,6 +119,14 @@ jobs:
         run: cp ".github/workflows/readme-ModDesktop.txt" "$ARCHIVE_NAME/README.txt"
 
       - name: Zip files
+        if: startsWith(matrix.os, 'windows')
+        shell: pwsh
+        run: |
+          $archiveName = "$env:ARCHIVE_NAME"
+          Compress-Archive -Path $archiveName -DestinationPath "$archiveName.zip"
+
+      - name: Zip files
+        if: startsWith(matrix.os, 'windows') != true
         run: zip -r $ARCHIVE_NAME.zip $ARCHIVE_NAME
 
       - name: Add zip to release
