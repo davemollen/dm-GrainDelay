@@ -108,7 +108,7 @@ jobs:
       - name: Determine build archive name
         run: |
           # Windows (usually) doesn't like colons in file names
-          echo "ARCHIVE_NAME=$plugin_name-moddesktop-lv2-${{ matrix.name }}" >> "$GITHUB_ENV"
+          echo "ARCHIVE_NAME=$plugin_name-${{ matrix.name }}" >> "$GITHUB_ENV"
 
       - name: Move all packaged plugin into a directory
         run: |
