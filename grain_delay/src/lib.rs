@@ -20,6 +20,7 @@ pub struct GrainDelay {
   low_pass_filter: OnePoleFilterStereo,
   grains: Grains,
   dc_block: DcBlock,
+  mix: Mix,
 }
 
 impl GrainDelay {
@@ -29,6 +30,7 @@ impl GrainDelay {
       low_pass_filter: OnePoleFilterStereo::new(sample_rate),
       grains: Grains::new(sample_rate),
       dc_block: DcBlock::new(sample_rate),
+      mix: Mix::new(),
     }
   }
 
@@ -55,7 +57,7 @@ impl GrainDelay {
     let feedback_out = self.apply_feedback(filter_out, feedback);
     self.variable_delay_line.write(input + feedback_out);
 
-    Mix::process(input, filter_out, mix)
+    self.mix.process(input, filter_out, mix)
   }
 
   fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {
