@@ -12,9 +12,9 @@ dependencies = [
 
 [[package]]
 name = "fastrand"
-version = "2.3.0"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
+checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
 
 [[package]]
 name = "grain_delay"
@@ -25,8 +25,8 @@ dependencies = [
 
 [[package]]
 name = "lv2"
-version = "0.6.1"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+version = "0.7.0"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-atom",
  "lv2-core",
@@ -35,13 +35,14 @@ dependencies = [
  "lv2-patch",
  "lv2-units",
  "lv2-urid",
+ "mod-license",
  "urid",
 ]
 
 [[package]]
 name = "lv2-atom"
 version = "2.0.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-core",
  "lv2-sys",
@@ -52,7 +53,7 @@ dependencies = [
 [[package]]
 name = "lv2-core"
 version = "3.0.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-core-derive",
  "lv2-sys",
@@ -61,8 +62,8 @@ dependencies = [
 
 [[package]]
 name = "lv2-core-derive"
-version = "2.1.1"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+version = "2.1.2"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -71,8 +72,8 @@ dependencies = [
 
 [[package]]
 name = "lv2-log"
-version = "0.1.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+version = "0.1.1"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-core",
  "lv2-sys",
@@ -81,8 +82,8 @@ dependencies = [
 
 [[package]]
 name = "lv2-midi"
-version = "1.2.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+version = "1.2.1"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-atom",
  "lv2-sys",
@@ -93,7 +94,7 @@ dependencies = [
 [[package]]
 name = "lv2-patch"
 version = "0.1.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-sys",
  "urid",
@@ -101,13 +102,13 @@ dependencies = [
 
 [[package]]
 name = "lv2-sys"
-version = "2.0.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+version = "2.0.1"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 
 [[package]]
 name = "lv2-units"
 version = "0.1.3"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-sys",
  "urid",
@@ -116,7 +117,17 @@ dependencies = [
 [[package]]
 name = "lv2-urid"
 version = "2.1.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
+dependencies = [
+ "lv2-core",
+ "lv2-sys",
+ "urid",
+]
+
+[[package]]
+name = "mod-license"
+version = "0.1.0"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "lv2-core",
  "lv2-sys",
@@ -125,27 +136,27 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.92"
+version = "1.0.107"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37d3544b3f2748c54e147655edb5025752e2303145b5aefb3c3ea2c78b973bb0"
+checksum = "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.38"
+version = "1.0.47"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e4dccaaaf89514f546c693ddc140f729f958c247918a13380cccc6078391acc"
+checksum = "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
 dependencies = [
  "proc-macro2",
 ]
 
 [[package]]
 name = "syn"
-version = "1.0.109"
+version = "2.0.119"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
+checksum = "872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -154,14 +165,14 @@ dependencies = [
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.14"
+version = "1.0.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "adb9e6ca4f869e1180728b7950e35922a7fc6397f7b641499e8f3ef06e50dc83"
+checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
 
 [[package]]
 name = "urid"
 version = "0.1.0"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "urid-derive",
 ]
@@ -169,7 +180,7 @@ dependencies = [
 [[package]]
 name = "urid-derive"
 version = "0.1.1"
-source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#532e4993b92b25021078c711d15df94af21cd085"
+source = "git+https://github.com/davemollen/rust-lv2.git?branch=master#503b3011390ab69fc979b7095c33a9abe0747479"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -178,6 +189,6 @@ dependencies = [
 
 [[package]]
 name = "wmidi"
-version = "3.1.0"
+version = "4.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca299959bb6d529c2bee3feb517899959da3052c4a29eea0a8ff568b825eb6cf"
+checksum = "2b1b1e28ac6301b1c097d21c11130090f7ecc5db9d5ef4e52595ab942f8d76d5"

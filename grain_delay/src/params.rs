@@ -1,6 +1,8 @@
 mod smooth;
-use smooth::LinearSmooth;
-pub use {crate::MAX_DRIFT, smooth::Smoother};
+pub use {
+  crate::MAX_DRIFT,
+  smooth::{LinearSmooth, Smoother},
+};
 
 pub struct Params {
   pub spray: f32,

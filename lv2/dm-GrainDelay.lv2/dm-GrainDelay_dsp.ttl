@@ -133,17 +133,27 @@ A granular delay effect.
 		a lv2:AudioPort, lv2:InputPort ;
 		lv2:index 10 ;
 		lv2:symbol "in" ;
-		lv2:name "In"
+		lv2:name "In" ;
 	] , [
 		a lv2:AudioPort, lv2:OutputPort ;
 		lv2:index 11 ;
 		lv2:symbol "out_left" ;
-		lv2:name "Out left"
+		lv2:name "Out left" ;
 	] , [
 		a lv2:AudioPort, lv2:OutputPort ;
 		lv2:index 12 ;
 		lv2:symbol "out_right" ;
-		lv2:name "Out right"
+		lv2:name "Out right" ;
+	] , [
+		a lv2:InputPort, lv2:ControlPort ;
+		lv2:index 13 ;
+		lv2:symbol "enabled" ;
+		lv2:name "Enabled" ;
+		lv2:designation lv2:enabled ;
+		lv2:portProperty lv2:integer, lv2:toggled ;
+		lv2:default 1 ;
+		lv2:minimum 0 ;
+		lv2:maximum 1 ;
 	] .
 
 # Port groups

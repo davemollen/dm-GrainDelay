@@ -1,4 +1,5 @@
 include!(concat!(env!("OUT_DIR"), "/constants.rs"));
+mod bypass;
 mod dc_block;
 mod shared {
   pub mod delay_line;
@@ -10,7 +11,7 @@ mod mix;
 mod one_pole_filter_stereo;
 mod params;
 mod variable_delay_line;
-pub use params::Params;
+pub use {bypass::Bypass, params::Params};
 use {
   dc_block::DcBlock, grains::Grains, mix::Mix, one_pole_filter_stereo::OnePoleFilterStereo,
   params::Smoother, shared::delay_line::Interpolation, variable_delay_line::VariableDelayLine,

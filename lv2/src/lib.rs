@@ -1,6 +1,6 @@
 extern crate grain_delay;
 extern crate lv2;
-use grain_delay::{GrainDelay, Params};
+use grain_delay::{Bypass, GrainDelay, Params};
 use lv2::prelude::*;
 
 #[derive(PortCollection)]
@@ -18,12 +18,14 @@ struct Ports {
   input: InputPort<InPlaceAudio>,
   output_left: OutputPort<InPlaceAudio>,
   output_right: OutputPort<InPlaceAudio>,
+  enabled: InputPort<InPlaceControl>,
 }
 
 #[uri("https://github.com/davemollen/dm-GrainDelay")]
 struct DmGrainDelay {
   grain_delay: GrainDelay,
   params: Params,
+  bypass: Bypass,
 }
 
 impl Plugin for DmGrainDelay {
@@ -41,6 +43,7 @@ impl Plugin for DmGrainDelay {
     Some(Self {
       grain_delay: GrainDelay::new(sample_rate),
       params: Params::new(sample_rate),
+      bypass: Bypass::new(sample_rate),
     })
   }
 
@@ -48,11 +51,23 @@ impl Plugin for DmGrainDelay {
   fn activate(&mut self, _features: &mut Self::InitFeatures) {
     self.grain_delay.reset();
     self.params.reset();
+    self.bypass.reset();
   }
 
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
-  fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
+  fn run(&mut self, ports: &mut Ports, _features: &mut (), sample_count: u32) {
+    self.bypass.set_enabled(ports.enabled.get() == 0., || {
+      self.grain_delay.reset();
+      self.params.reset();
+    });
+
+    if self.bypass.is_done_activating() {
+      ports.output_left.copy_from(&ports.input, sample_count);
+      ports.output_right.copy_from(&ports.input, sample_count);
+      return;
+    }
+
     self.params.set(
       ports.spray.get(),
       ports.frequency.get(),
@@ -68,9 +83,11 @@ impl Plugin for DmGrainDelay {
 
     let output_channels = ports.output_left.iter().zip(ports.output_right.iter());
     for (input, (output_left, output_right)) in ports.input.iter().zip(output_channels) {
-      let output = self.grain_delay.process(input.get(), &mut self.params);
-      output_left.set(output.0);
-      output_right.set(output.1);
+      let dry = input.get();
+      let wet = self.grain_delay.process(dry, &mut self.params);
+      let grain_delay_output = self.bypass.process(dry, wet);
+      output_left.set(grain_delay_output.0);
+      output_right.set(grain_delay_output.1);
     }
   }
 }
