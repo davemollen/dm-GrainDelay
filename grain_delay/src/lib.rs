@@ -17,6 +17,13 @@ use {
   params::Smoother, shared::delay_line::Interpolation, variable_delay_line::VariableDelayLine,
 };
 
+/**
+ * Stereo to mono = 0.5 and
+ * Grains overlap gain = 0.5.
+ * Which gives feedback normalization gain of 0.5 * 0.5 = 0.25
+ */
+const FEEDBACK_NORMALIZATION_GAIN: f32 = 0.25;
+
 pub struct GrainDelay {
   variable_delay_line: VariableDelayLine,
   low_pass_filter: OnePoleFilterStereo,
@@ -70,7 +77,7 @@ impl GrainDelay {
   }
 
   fn apply_feedback(&mut self, input: (f32, f32), feedback: f32) -> f32 {
-    let mono_input = (input.0 + input.1) * 0.5;
+    let mono_input = (input.0 + input.1) * FEEDBACK_NORMALIZATION_GAIN;
     let feedback_out = mono_input * feedback;
     self.dc_block.process(feedback_out.clamp(-1., 1.))
   }

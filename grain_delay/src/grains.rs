@@ -9,7 +9,6 @@ pub struct Grains {
   grain_delay_line: DelayLine,
   phasor: Phasor,
   grains: Vec<Grain>,
-  gain_correction: f32,
 }
 
 impl Grains {
@@ -20,7 +19,6 @@ impl Grains {
       grain_delay_line: DelayLine::new((sample_rate * MAX_GRAIN_DELAY_TIME) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
       grains,
-      gain_correction: (VOICES as f32 / 2.).recip(),
     }
   }
 
@@ -65,9 +63,6 @@ impl Grains {
 
     self.grain_delay_line.write(input);
 
-    (
-      grains_out.0 * self.gain_correction,
-      grains_out.1 * self.gain_correction,
-    )
+    (grains_out.0, grains_out.1)
   }
 }
