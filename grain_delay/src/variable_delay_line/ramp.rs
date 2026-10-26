@@ -15,6 +15,12 @@ impl Ramp {
     }
   }
 
+  pub fn reset(&mut self) {
+    self.x = 0.;
+    self.trigger = false;
+    self.is_active = false;
+  }
+
   pub fn start(&mut self) {
     self.trigger = true;
     self.is_active = true;

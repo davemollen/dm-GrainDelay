@@ -3,6 +3,7 @@ mod dc_block;
 mod shared {
   pub mod delay_line;
   pub mod float_ext;
+  pub mod macros;
 }
 mod grains;
 mod mix;
@@ -32,6 +33,13 @@ impl GrainDelay {
       dc_block: DcBlock::new(sample_rate),
       mix: Mix::new(),
     }
+  }
+
+  pub fn reset(&mut self) {
+    self.variable_delay_line.reset();
+    self.low_pass_filter.reset();
+    self.grains.reset();
+    self.dc_block.reset();
   }
 
   pub fn process(&mut self, input: f32, params: &mut Params) -> (f32, f32) {

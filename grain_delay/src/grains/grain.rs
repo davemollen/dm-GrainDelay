@@ -37,6 +37,11 @@ impl Grain {
     }
   }
 
+  pub fn reset(&mut self) {
+    self.time_ramp.reset();
+    self.delta.reset();
+  }
+
   pub fn process(
     &mut self,
     grain_delay_line: &DelayLine,

@@ -4,7 +4,6 @@ use crate::shared::{
   float_ext::FloatExt,
 };
 use ramp::Ramp;
-use std::f32::consts::FRAC_PI_2;
 
 pub struct VariableDelayLine {
   delay_line: DelayLine,
@@ -21,6 +20,11 @@ impl VariableDelayLine {
       previous_time: 0.,
       next_time: 0.,
     }
+  }
+
+  pub fn reset(&mut self) {
+    self.delay_line.reset();
+    self.ramp.reset();
   }
 
   pub fn read(&mut self, time: f32, interp: Interpolation) -> f32 {
@@ -47,9 +51,9 @@ impl VariableDelayLine {
 
   fn crossfade(&mut self, interp: Interpolation) -> f32 {
     let ramp = self.ramp.process();
-    let window = (ramp * FRAC_PI_2).fast_cos();
-    let window = window * window;
-    self.delay_line.read(self.previous_time, interp) * window
-      + self.delay_line.read(self.next_time, interp) * (1. - window)
+    let mix = ramp.cubic_spline_curve();
+    let a = self.delay_line.read(self.previous_time, interp);
+    let b = self.delay_line.read(self.next_time, interp);
+    a.mix(b, mix)
   }
 }

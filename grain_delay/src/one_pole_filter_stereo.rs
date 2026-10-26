@@ -17,6 +17,10 @@ impl OnePoleFilterStereo {
     }
   }
 
+  pub fn reset(&mut self) {
+    self.z = (0., 0.);
+  }
+
   pub fn process(&mut self, input: (f32, f32), freq: f32) -> (f32, f32) {
     if freq != self.prev_freq {
       self.b1 = (freq * self.t).exp();

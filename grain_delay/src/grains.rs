@@ -24,6 +24,14 @@ impl Grains {
     }
   }
 
+  pub fn reset(&mut self) {
+    self.grain_delay_line.reset();
+    self.phasor.reset();
+    for grain in self.grains.iter_mut() {
+      grain.reset();
+    }
+  }
+
   pub fn process(
     &mut self,
     input: f32,
